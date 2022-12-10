@@ -1,0 +1,212 @@
+html,body
+{
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    overflow-x: hidden; 
+}
+
+body {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../obrazki/Money_and_Financial_Data_-_Finance_Concept.jpg');
+    background-position: 50% -20%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    margin: 0;
+}
+
+img#coinstack {
+    width: 3rem;
+    height: 3rem;
+    margin-right: 10px;
+    filter: invert(64%) sepia(57%) saturate(410%) hue-rotate(357deg) brightness(91%) contrast(84%);
+}
+
+header {
+    background-color: #0b1826;
+    color: white;
+    margin: none;
+}
+
+h1 {
+    margin: 0.5rem;
+    font-family: 'Times New Roman', serif;
+    letter-spacing: 0.1rem;
+    font-size: 2.7rem;
+    font-weight: bold;
+    background-image: linear-gradient(to right,
+            #462523 0,
+            #cb9b51 22%,
+            #f6e27a 45%,
+            #f6f2c0 50%,
+            #f6e27a 55%,
+            #cb9b51 78%,
+            #462523 100%);
+    color: transparent;
+    -webkit-background-clip: text;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0rem;
+    margin-top: 0.2rem;
+    font-family: 'Times New Roman', serif;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.6rem;
+    color: rgb(170, 168, 168);
+    font-family: 'Times New Roman', serif;
+    font-weight: bold;
+    font-style: italic;
+    letter-spacing: 1px;
+    transform: skew(0.10rad);
+}
+
+h4 {
+    font-family: 'Merienda', cursive;
+    font-size: 1.7rem;
+    font-weight: bold;
+}
+
+#registryPanel {
+    background-color: #eeeeee;
+    border-radius: 10px 10px 10px 10px;
+}
+
+#registryHeader {
+    background-image: linear-gradient(to right top, #0f3239, #103a41, #114348, #134c4f, #165555);
+    border-radius: 8px 8px 0 0;
+}
+
+#registryHeader h1 {
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-size: 2.4rem;
+}
+
+form {
+    width: 100%;
+    height: 100%;
+}
+
+label {
+    width: 100%;
+    height: 100%;
+}
+
+form img {
+    background-color: rgb(221, 220, 220);
+    border: solid;
+    border-width: 1px 0 1px 1px;
+    border-color: grey;
+    border-radius: 4px 0 0 4px;
+}
+
+#checkmarkImg {
+    width: 17%;
+    filter: invert(33%) sepia(79%) saturate(4750%) hue-rotate(122deg) brightness(95%) contrast(92%);
+    background-color: transparent;
+    border-color: transparent;
+    border: none;
+}
+
+#name,
+#email,
+#password,
+#repeatPassword {
+    height: 34px;
+    border: solid;
+    border-width: 1px 1px 1px 0;
+    border-color: grey;
+    border-radius: 0 4px 4px 0;
+}
+
+.form-check label {
+    height: auto;
+    width: auto;
+}
+
+input#name:focus,
+input#password:focus,
+input#email:focus,
+input#repeatPassword:focus {
+    background-color:rgba(223, 222, 164, 0.13) !important;
+    outline:0px !important;
+    -webkit-appearance:none;
+    box-shadow: none !important;
+}
+
+input#name:active,
+input#password:active,
+input#login:active,
+input#repeatPassword:active {
+    outline:0px !important;
+    -webkit-appearance:none;
+    box-shadow: none !important;
+}
+
+button {
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 0.1rem;
+    font-size: auto;
+    font-weight: bold;
+    color: white;
+    border-radius: 10px;
+    border-color: #0b1826;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.positiveRegistry {
+    width:100%;
+    height: auto;
+    font-size: 1.5rem;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background-color: rgb(22, 85, 85);
+    margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+    .positiveRegistry {
+        margin-left: 0px;
+    }
+}
+
+.negative {
+    width: 100%;
+    height: auto;
+    font-size: 1.5rem;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background-color: rgb(179, 79, 79);
+}
+
+.goBack {
+    width: 100%;
+    height: auto;
+    font-size: 1.5rem;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background-color: green;
+}
+
+button:hover {
+    transform: translateY(0.05rem);
+    cursor: pointer;
+}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block style %}<link rel="stylesheet" href="/css/StartingPage.css">{% endblock %}
+{% block title %}Starting Page{% endblock %}
+
+{% block body %}
+
+<section id="workingSpace" class="container-fluid p-0">
+    <div id="promoPanel" class="row justify-content-center m-3">
+        <div id="promoInfo" class="col col-xl-7 col-lg-10 col-md-12 p-2 mt-4">
+            <div class="row justify-content-center">
+                <div class="col col-auto text-center">
+                    <h4 class="mt-2 mb-5">Pierwszy krok do pewniejszej przyszłości!</h4>
+                </div>
+                <hr>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col col-auto text-center">
+                    <p>Ustalmy razem plan na wolność finansową, właśnie tu i właśnie teraz.</p>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col col-auto text-center text-start">
+                    <ul>
+                        <li class="text-start">Regularna archiwizacja przychodów oraz <div class="line-cut">wydatków
+                                <span><img class="listItems" src="/images/history_edu_FILL0_wght400_GRAD0_opsz48.png"
+                                        alt="image of letter with a feather"></span></div>
+                        </li>
+                        <li class="text-start">Świadome planowanie <div class="line-cut">wydatków<span><img
+                                        class="listItems" src="/images/payments_FILL0_wght400_GRAD0_opsz48.png"
+                                        alt="image of money bill"></span></div>
+                        </li>
+                        <li class="text-start">Ocena realizacji wprowadzonego planu i jego regularna
+                            <div class="line-cut">aktualizacja<span><img class="listItems"
+                                        src="/images/rule_FILL0_wght400_GRAD0_opsz48.png" alt="checklist"></span>
+                            </div>
+                        </li>
+                        <li class="text-start">Spokojna i finansowo bezpieczna <div class="line-cut">
+                                przyszłość<span><img class="listItems"
+                                        src="/images/surfing_FILL0_wght400_GRAD0_opsz48.png" alt="checklist"></span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <nav class="row justify-content-center py-4">
+            <section id="login" class="col col-xl-3 col-lg-5 col-md-6 col-12 py-2">
+                <p>Do dzieła!</p>
+                <a href="/login" class="text-decoration-none">
+                    <button id="loginButton" name="login">Zaloguj się! <img
+                            src="/images/2x/outline_login_white_24dp.png"
+                            alt="icon with opening doors, login icon"></button>
+                </a>
+            </section>
+            <section id="register" class="col col-xl-3 col-lg-5 col-md-6 col-12 py-2">
+                <p>Dołącz do nas!</p>
+                <a href="/register/new" class="text-decoration-none">
+                    <button id="registerButton">Zarejestruj się! <img
+                            src="/images/2x1/outline_person_add_alt_white_24dp.png"
+                            alt="icon with a plus sign next to a person"></button>
+                </a>
+            </section>
+        </nav>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,49 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/bootstrap-css/bootstrap.css">
+    {% block style %}
+    {% endblock %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Adamina&family=Alice&family=Asap+Condensed:ital@0;1&family=Lobster&family=Merienda:wght@400;700&family=Roboto:ital,wght@0,300;1,300&display=swap"
+        rel="stylesheet">
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/styles.css" />
 </head>
 
 <body>
-
-    <div class="container">
-
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                <ul class="nav navbar-nav">
-                    <li><a href="/">Home</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    {% if current_user %}
-                    <li><a href="/profile/show">Profile</a></li>
-                    <li><a href="/logout">Log out</a></li>
-                    {% endif %}
-                </ul>
+    <main>
+        <header class="container-fluid">
+            <div id="logo" class="row justify-content-center">
+                <div class="col col-md-auto text-end align-self-center d-none d-md-block no-padding">
+                    <img id="coinstack" src="/images/coin-stack.png" alt="image of stacked coins">
+                </div>
+                <div class="col col-auto text-start p-0">
+                    <h1>Budget Manager.com</h1>
+                </div>
             </div>
-        </nav>
-
-        {% for message in flash_messages %}
-        <div class="alert alert-{{ message.type }}">
-            {{ message.body }}
-        </div>
-        {% endfor %}
+            <div id="citation" class="row justify-content-center">
+                <div class="col col-sm-auto">
+                    <h2><cite>Jesteśmy tym, co w swoim życiu powtarzamy. Doskonałość nie jest jednorazowym aktem, lecz
+                            nawykiem.</cite></h2>
+                    <h3>~ Arystoteles</h3>
+                </div>
+            </div>
+        </header>
 
         {% block body %}
         {% endblock %}
 
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
-        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/jquery.validate.min.js"></script>
+    </main>
 
     {% block footer %}
     {% endblock %}
+
+    <script src="js/bootstrap.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/jquery.validate.min.js"></script>
 </body>
 
 </html>

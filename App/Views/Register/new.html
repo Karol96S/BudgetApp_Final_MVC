@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/css/RegisterPanel.css">{% endblock %}
+{% block title %}Register Panel {% endblock %}
+
+{% block body %}
+
+<section id="workingSpace" class="container-fluid p-0">
+    <div class="row justify-content-center">
+        <div id="registryPanel" class="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-11 justify-content-center mt-5">
+            <form action="/register/create" method="post">
+                <div>
+                    <div id="registryHeader" class="row text-center py-2 mb-4">
+                        <h1>Rejestracja</h1>
+                    </div>
+                    <div class="form-group row pt-4 pb-0">
+                        <div class="col-md-3 col-1 p-0"></div>
+                        <div class="col-1 text-center p-0">
+                            <label for="name" class="col d-flex align-items-center justify-content-end">
+                                <img src="/images/baseline_person_black_24dp.png" class="p-1" alt="icon of a person">
+                            </label>
+                        </div>
+                        <div class="col-md-5 col-9 p-0">
+                            <input type="text" id="name" class="form-control" name="name" value="{{ user.name }}"
+                                autofocus placeholder="Podaj Imię">
+                        </div>
+                        <div class="col-md-3 col-1 p-0"></div>
+                    </div>
+                    {% if user.errors.name is not empty %}
+                    <div class="form-group row py-0">
+                        <div class="col-md-3 col-1 p-0"></div>
+                        <div class="col-1 p-0"></div>
+                        <div class="col-md-5 col-9 p-0">
+                            <p class="text-danger">{{ user.errors.name }}</p>
+                        </div>
+                        <div class="col-md-3 col-1 p-0"></div>
+                    </div>
+                    {% endif %}
+                    <div class="form-group row pt-3 pb-0">
+                        <div class="col-md-3 col-1 p-0"></div>
+                        <div class="col-1 text-center p-0">
+                            <label for="email" class="col d-flex align-items-center justify-content-end">
+                                <img src="/images/outline_email_black_24dp.png" class="p-1" alt="icon of an envelope">
+                            </label>
+                        </div>
+                        <div class="col-md-5 col-9 p-0">
+                            <input type="email" id="email" class="form-control" name="email" value="{{ user.email }}"
+                                placeholder="E-mail" required>
+                        </div>
+                        <div class="col-md-3 col-1 p-0"></div>
+                    </div>
+                    {% if user.errors.email is not empty %}
+                    <div class="form-group row py-0 px-0">
+                        <div class="col-md-3 col-1 p-0"></div>
+                        <div class="col-1 p-0"></div>
+                        <div class="col-md-5 col-9 p-0">
+                            <p class="text-danger">{{ user.errors.email }}</p>
+                        </div>
+                        <div class="col-md-3 col-1 p-0"></div>
+                    </div>
+                    {% endif %}
+                    <div class="form-group row pt-3 pb-0">
+                        <div class="col-md-3 col-1 p-0"></div>
+                        <div class="col-1 p-0">
+                            <label for="password" class="col d-flex align-items-center justify-content-end">
+                                <img src="/images/outline_key_black_24dp.png" class="p-1" alt="icon of a key">
+                            </label>
+                        </div>
+                        <div class="col-md-5 col-9 p-0">
+                            <input type="password" id="password" name="password" class="form-control"
+                                placeholder="Hasło" required>
+                        </div>
+                        <div class="col-md-3 col-1 p-0"></div>
+                    </div>
+                    {% if user.errors.password is not empty %}
+                    <div class="form-group row py-0 px-0">
+                        <div class="col-md-3 col-1 p-0"></div>
+                        <div class="col-1 p-0"></div>
+                        <div class="col-md-5 col-9 p-0">
+                            <p class="text-danger">{{ user.errors.password }}</p>
+                        </div>
+                        <div class="col-md-3 col-1 p-0"></div>
+                    </div>
+                    {% endif %}
+                    <div class="form-group row pt-3 pb-0">
+                        <div class="col-md-3 col-1 p-0"></div>
+                        <div class="col-1 p-0">
+                            <label for="repeatPassword" class="col d-flex align-items-center justify-content-end">
+                                <img src="/images/outline_key_black_24dp.png" class="p-1" alt="icon of a key">
+                            </label>
+                        </div>
+                        <div class="col-md-5 col-9 p-0">
+                            <input type="password" id="repeatPassword" class="form-control" name="repeatPassword"
+                                placeholder="Powtórz Hasło" required>
+                        </div>
+                        <div class="col-md-3 col-1 p-0"></div>
+                    </div>
+                    {% if user.errors.repeatPassword is not empty %}
+                    <div class="form-group row py-0 px-0">
+                        <div class="col-md-3 col-1 p-0"></div>
+                        <div class="col-1 p-0"></div>
+                        <div class="col-md-5 col-9 p-0">
+                            <p class="text-danger">{{ user.errors.repeatPassword }}</p>
+                        </div>
+                        <div class="col-md-3 col-1 p-0"></div>
+                    </div>
+                    {% endif %}
+                    <div class="form-group row">
+                        <div class="col-md-4 col-2 p-0"></div>
+                        <div class="col-md-3 col-2 p-0"></div>
+                    </div>
+                    <div class="row justify-content-center mt-3 mb-5">
+                        <div class="col-md-3 col-2 p-0"></div>
+                        <nav class="col-md-6 col-8">
+                            <button type="submit" class="positiveRegistry">Zarejestruj</button>
+                        </nav>
+                        <div class="col-md-3 col-2 p-0"></div>
+                    </div>
+            </form>
+            <div class="row justify-content-end my-4">
+                <div class="col-md-8 col-2 p-0"></div>
+                <nav class="col-md-auto col-8">
+                    <form action="/" method="post">
+                        <button class="negative">&#60;&#60; Wróć</button>
+                    </form>
+                </nav>
+                <div class="col-md-1 col-2 p-0"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

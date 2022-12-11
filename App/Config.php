@@ -6,11 +6,11 @@ class Config{
 
     const DB_HOST = 'localhost';
 
-    const DB_NAME = 'mvclogin';
+    const DB_NAME = 'budget_aplication';
 
-    const DB_USER = 'mvcuser';
+    const DB_USER = 'root';
 
-    const DB_PASSWORD = '123';
+    const DB_PASSWORD = '';
 
     const SHOW_ERRORS = true;
 

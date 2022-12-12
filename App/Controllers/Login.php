@@ -24,9 +24,10 @@ class Login extends \Core\Controller
 
             Auth::login($user, $remember_me);
 
-            Flash::addMessage('Login successful');
+            //Flash::addMessage('Login successful');
 
-            $this->redirect(Auth::getReturnToPage());
+            $this->redirect("/profile/index");
+            //$this->redirect(Auth::getReturnToPage());
 
         } else {
 

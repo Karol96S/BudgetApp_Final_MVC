@@ -78,8 +78,10 @@ class User extends \Core\Model
     public function validate()
     {
         // Name
-        if ((strlen($this->name) < 3) || (strlen($this->name) > 20)) {
-            $this->errors['name'] = 'Nazwa użytkownika musi posiadać od 3 do 20 znaków!';
+        if (isset($this->name)) {
+            if ((strlen($this->name) < 3) || (strlen($this->name) > 20)) {
+                $this->errors['name'] = 'Nazwa użytkownika musi posiadać od 3 do 20 znaków!';
+            }
         }
 
         // email address
@@ -108,7 +110,7 @@ class User extends \Core\Model
 
         // Repeat Password
         if (isset($this->repeatPassword)) {
-            
+
             if ($this->password !== $this->repeatPassword) {
                 $this->errors['repeatPassword'] = 'Hasła muszą być takie same!';
             }
@@ -155,12 +157,12 @@ class User extends \Core\Model
         $user = static::findByEmail($email);
 
         if ($user && $user->is_active) {
-            if (password_verify($password, $user->password_hash)) {
+            if (password_verify($password, $user->password)) {
                 return $user;
             }
-        }
 
-        return false;
+            return false;
+        }
     }
 
     public static function findByID($id)
@@ -215,6 +217,8 @@ class User extends \Core\Model
 
                 $user->sendPasswordResetEmail();
             }
+        } else {
+            return false;
         }
     }
 
@@ -372,7 +376,7 @@ class User extends \Core\Model
         if (empty($this->errors)) {
 
             $sql = 'UPDATE users
-                    SET name = :name,
+                    SET username = :name,
                         email = :email';
 
             // Add password if it's set

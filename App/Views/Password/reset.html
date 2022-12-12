@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/css/LoginScreen.css">{% endblock %}
+{% block title %}Password reset{% endblock %}
+
+{% block body %}
+
+<section id="workingSpace" class="container-fluid p-0">
+    <div class="row justify-content-center">
+        <div id="loginPanel" class="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-11 justify-content-center mt-5">
+            <form action="/password/reset-password" method="post" id="formPassword">
+
+                <input type="hidden" name="token" value="{{ token }}" />
+
+                <div>
+                    <div id="loginHeader" class="row text-center py-2 mb-4">
+                        <h1>Zresetuj hasło</h1>
+                    </div>
+                    <div class="form-group row pb-0 pt-4">
+                    </div>
+                    <div class="form-group row pt-4">
+                        <div class="col-md-3 col-1 p-0"></div>
+                        <div class="col-1 p-0">
+                            <label for="password" class="col d-flex align-items-center justify-content-end">
+                                <img src="/images/outline_key_black_24dp.png" class="p-1" alt="icon of a key">
+                            </label>
+                        </div>
+                        <div class="col-md-5 col-9 p-0">
+                            <input type="password" id="password" name="password" class="form-control"
+                                placeholder="Hasło" required>
+                        </div>
+                        <div class="col-md-3 col-1 p-0"></div>
+                    </div>
+                    <div class="form-group row pb-0 pt-1">
+                        <div class="col-md-3 col-1 p-0"></div>
+                        <div class="col-1 text-center p-0">
+                        </div>
+                        <div class="col-md-5 col-9 p-0 text-start">
+                            <h3>*Wprowadź nowe hasło.</h3>
+                        </div>
+                        <div class="col-md-3 col-1 p-0"></div>
+                    </div>
+                    {% if user.errors.password is not empty %}
+                    <div class="form-group row py-0 px-0">
+                        <div class="col-md-3 col-1 p-0"></div>
+                        <div class="col-1 p-0"></div>
+                        <div class="col-md-5 col-9 p-0">
+                            <p class="text-danger">{{ user.errors.password }}</p>
+                        </div>
+                        <div class="col-md-3 col-1 p-0"></div>
+                    </div>
+                    {% endif %}
+                    <div class="row justify-content-center mb-2 mt-4">
+                        <div class="col-md-3 col-2 p-0"></div>
+                        <nav class="col-md-6 col-8">
+                            <button class="positiveLogin">Zmień hasło</button>
+                        </nav>
+                        <div class="col-md-3 col-2 p-0"></div>
+                    </div>
+            </form>
+            <div class="row justify-content-end my-4">
+                <div class="col-md-8 col-2 p-0"></div>
+                <nav class="col-md-auto col-8">
+                    <form action="/login" method="post">
+                        <button class="negative">&#60;&#60; Wróć</button>
+                    </form>
+                </nav>
+                <div class="col-md-1 col-2 p-0"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

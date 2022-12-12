@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/css/LoginScreen.css">{% endblock %}
+{% block title %}Password reset{% endblock %}
+
+{% block body %}
+
+<section id="workingSpace" class="container-fluid p-0">
+    <div class="row justify-content-center">
+        <div id="loginPanel" class="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-11 justify-content-center mt-5">
+            <form action="#" id="formPassword">
+
+                <input type="hidden" name="token" value="{{ token }}" />
+
+                <div>
+                    <div id="loginHeader" class="row text-center py-2 mb-4">
+                        <h1>Zresetuj hasło</h1>
+                    </div>
+                    <div class="form-group row pb-0 pt-4"></div>
+                    <div class="form-group row pt-4 text-center">
+                        <h2>Zmieniono hasło!</h2>
+                    </div>
+                    <div class="form-group row pb-0 pt-1 text-center">
+                        <div class="col-md-3 col-1 p-0"></div>
+                        <div class="col-md-6 col-9 pt-4">
+                            <a href="/login">Chcesz się zalogować?</a>
+                        </div>
+                        <div class="col-md-3 col-1 p-0"></div>
+                    </div>
+                    <div class="form-group row pb-0 pt-4"></div>
+                    <div class="form-group row pb-0 pt-4"></div>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

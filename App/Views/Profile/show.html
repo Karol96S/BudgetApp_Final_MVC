@@ -1,0 +1,25 @@
+{% extends "userIsLoggedIn.html" %}
+
+{% block style %}<link rel="stylesheet" href="/css/HomePage.css">{% endblock %}
+{% block title %} User's Page {% endblock %}
+
+{% block body %}
+<section id="workingSpace" class="container-fluid p-0">
+    <div class="row justify-content-center text-center">
+        <div class="instructions pt-5">
+            <h4>Zaczynajmy!</h4>
+            <p class="stepByStep">1. Dodaj dotychczas uzyskane przychody</p>
+            <img src="/images/baseline_arrow_downward_black_24dp.png" alt="downwards arrow">
+            <p class="stepByStep">2. Sporządź listę poniesionych wydatków</p>
+            <img src="/images/baseline_arrow_downward_black_24dp.png" alt="downwards arrow">
+            <p class="stepByStep">3. Sprawdź swój bilans</p>
+            <img src="/images/baseline_arrow_downward_black_24dp.png" alt="downwards arrow">
+            <p class="stepByStep">4. Określ cel priorytetowy dla swoich środków</p>
+            <img src="/images/baseline_arrow_downward_black_24dp.png" alt="downwards arrow">
+            <p class="stepByStep">5. Sporządź plan budżetu na nadchodzący okres</p>
+            <img src="/images/baseline_arrow_downward_black_24dp.png" alt="downwards arrow">
+            <p class="stepByStep">6. POWTÓRZ !</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

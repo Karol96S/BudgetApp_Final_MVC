@@ -8,7 +8,7 @@ html,body
 }
 
 body {
-    background-image: url(../obrazki/homePageBackground.jpg);
+    background-image: url(../images/homePageBackground.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
@@ -136,11 +136,11 @@ a.nav-link.active {
     padding-bottom: 1rem;
 }
 
-#navbarCurrentPage {
+#navbarSupportedContent li:nth-of-type(2) a {
     color: rgb(16, 97, 247) !important;
 }
 
-#navbarCurrentPageImg {
+#navbarSupportedContent li:nth-of-type(2) a img {
     filter: invert(30%) sepia(69%) saturate(4936%) hue-rotate(215deg) brightness(97%) contrast(99%) !important;
 }
 

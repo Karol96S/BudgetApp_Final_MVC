@@ -36,6 +36,8 @@ class View{
             $twig = new \Twig\Environment($loader);
             $twig->addGlobal('current_user', \App\Auth::getUser());
             $twig->addGlobal('flash_messages', \App\Flash::getMessages());
+            $twig->addGlobal('max_date', date('Y-m-t'));
+            $twig->addGlobal('current_date', date('Y-m-d'));
         }
  
         return $twig->render($template, $args);

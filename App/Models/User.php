@@ -64,7 +64,12 @@ class User extends \Core\Model
             $stmt->bindValue(':email', $this->email, PDO::PARAM_STR);
             $stmt->bindValue(':activation_hash', $hashed_token, PDO::PARAM_STR);
 
-            return $stmt->execute();
+            $stmt->execute();
+
+            $this->loadDefaultTables($this->email);
+
+            return true;
+
         }
 
         return false;
@@ -114,6 +119,45 @@ class User extends \Core\Model
             if ($this->password !== $this->repeatPassword) {
                 $this->errors['repeatPassword'] = 'Hasła muszą być takie same!';
             }
+        }
+    }
+
+    /**
+     * Load default incomes and expenses tables
+     */
+    private function loadDefaultTables($userEmail)
+    {
+        
+        $db = static::getDB();
+
+        $idQuery = $db->query("SELECT id FROM users WHERE email='$userEmail'");
+        $userId = $idQuery->fetchColumn();
+
+        $expensesCategoryDefaultQuery = $db->query("SELECT name FROM expenses_category_default");
+        $namesOfExpensesCategories = $expensesCategoryDefaultQuery->fetchAll();
+
+        foreach ($namesOfExpensesCategories as $category) {
+            $name = $category['name'];
+            $insertExpenseCategories = $db->prepare("INSERT INTO expenses_category_assigned_to_users VALUES(NULL, '$userId', '$name')");
+            $insertExpenseCategories->execute();
+        }
+
+        $incomesCategoryDefaultQuery = $db->query("SELECT name FROM incomes_category_default");
+        $namesOfIncomesCategories = $incomesCategoryDefaultQuery->fetchAll();
+
+        foreach ($namesOfIncomesCategories as $category) {
+            $name = $category['name'];
+            $insertIncomesCategories = $db->prepare("INSERT INTO incomes_category_assigned_to_users VALUES(NULL, '$userId', '$name')");
+            $insertIncomesCategories->execute();
+        }
+
+        $paymentMethodsDefaultQuery = $db->query("SELECT name FROM payment_methods_default");
+        $namesOfPaymentMethods = $paymentMethodsDefaultQuery->fetchAll();
+
+        foreach ($namesOfPaymentMethods as $category) {
+            $name = $category['name'];
+            $insertPaymentMethod = $db->prepare("INSERT INTO payment_methods_assigned_to_users VALUES(NULL, '$userId', '$name')");
+            $insertPaymentMethod->execute();
         }
     }
 

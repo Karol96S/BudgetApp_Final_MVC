@@ -1,0 +1,152 @@
+{% extends "userIsLoggedIn.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/css/AddIncome.css">{% endblock %}
+{% block title %} Add Income {% endblock %}
+
+
+{% block body %}
+
+<section id="workingSpace" class="container-fluid p-0">
+    <div class="row justify-content-center text-center">
+        <div id="addIncomeTable"
+            class="col-xxl-5 col-xl-6 col-md-8 col-sm-10 col-11 justify-content-center mt-3 mt-sm-5">
+            <div id="addIncomeHeader" class="row text-center py-2 px-0 mb-4">
+                <h1>- Wprowadź Przychód -</h1>
+            </div>
+            <form method="post" action="/income/create" class="text-end">
+                <div class="row py-2">
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                    <div class="col col-md-3 col-3">
+                        <label for="incomeAmount" class="align-middle bold">Kwota:</label>
+                    </div>
+                    <div class="col col-xs-9 d-block d-sm-none"></div>
+                    <div class="col col-md-7 col-sm-8 col-12">
+                        <div class="input-group">
+                            <input type="number" step="0.01" min="0" id="incomeAmount" class="form-control"
+                                name="amount" placeholder="Podaj kwotę" aria-label="Amount (to the nearest dollar)"
+                                required>
+                            <div class="input-group-append">
+                                <span class="input-group-text">zł</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                </div>
+                {% if income.errors.amount is not empty %}
+                <div class="row p-0 m-0">
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                    <div class="col col-md-3 col-3 mb-0"></div>
+                    <div class="col col-xs-9 d-block d-sm-none"></div>
+                    <div class="col col-md-7 col-sm-8 col-12 text-start">
+                        <p class="text-danger">{{ income.errors.amount }}</p>
+                    </div>
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                </div>
+                {% endif %}
+                <div class="row py-4">
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                    <div class="col col-md-3 col-3">
+                        <label for="date" class="align-middle bold">Data:</label>
+                    </div>
+                    <div class="col col-xs-9 d-block d-sm-none"></div>
+                    <div class="col col-md-7 col-sm-8 col-12">
+                        <div class="input-group">
+                            <input type="date" min="2000-01-01" max="{{ max_date }}" id="date" class="form-control"
+                                name="date" value="{{ current_date }}" required>
+                        </div>
+                    </div>
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                </div>
+                {% if income.errors.date is not empty %}
+                <div class="row p-0 m-0">
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                    <div class="col col-md-3 col-3 mb-0"></div>
+                    <div class="col col-xs-9 d-block d-sm-none"></div>
+                    <div class="col col-md-7 col-sm-8 col-12 text-start">
+                        <p class="text-danger">{{ income.errors.date }}</p>
+                    </div>
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                </div>
+                {% endif %}
+                <div id="categories" class="row py-4">
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                    <div class="col col-md-3 col-3 mb-2">
+                        <label id="category" class="bold">Kategoria:</label>
+                    </div>
+                    <div class="col col-xs-9 d-block d-sm-none"></div>
+                    <div class="col col-md-7 col-sm-8 col-12 text-start">
+                        <select class="form-select" name="categoryOfIncome" aria-label="Default select example">
+                            <option selected id="wynagrodzenie" value="Salary">Wynagrodzenie
+                            </option>
+                            <option id="odsetkiBankowe" value="Interest">Odsetki Bankowe
+                            </option>
+                            <option id="allegro" value="Allegro">Sprzedaż na Allegro
+                            </option>
+                            <option id="inne" value="Another">Inne</option>
+                        </select>
+                    </div>
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                </div>
+                {% if income.errors.categoryOfIncome is not empty %}
+                <div class="row p-0 m-0">
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                    <div class="col col-md-3 col-3 mb-0"></div>
+                    <div class="col col-xs-9 d-block d-sm-none"></div>
+                    <div class="col col-md-7 col-sm-8 col-12 text-start">
+                        <p class="text-danger">{{ income.errors.categoryOfIncome }}</p>
+                    </div>
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                </div>
+                {% endif %}
+                <div class="row pt-4">
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                    <div class="col col-md-3 col-3">
+                        <label for="comment" class="bold">Komentarz: (opcjonalnie)</label>
+                    </div>
+                    <div class="col col-xs-9 d-block d-sm-none"></div>
+                    <div class="col col-md-7 col-sm-8 col-12">
+                        <div class="input-group">
+                            <textarea class="form-control" id="comment" name="comment"
+                                aria-label="With textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                </div>
+                {% if income.errors.comment is not empty %}
+                <div class="row p-0 m-0">
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                    <div class="col col-md-3 col-3 mb-0"></div>
+                    <div class="col col-xs-9 d-block d-sm-none"></div>
+                    <div class="col col-md-7 col-sm-8 col-12 text-start">
+                        <p class="text-danger">{{ income.errors.comment }}</p>
+                    </div>
+                    <div class="col col-md-1 d-none d-sm-block"></div>
+                </div>
+                {% endif %}
+
+                <div class="row py-4 mt-4">
+                    <div class="col col-md-1 col-2 d-none d-sm-block"></div>
+                    <div class="col col-md-3 d-none d-md-block"></div>
+                    <div class="col col-md-7 col-sm-8 col-12">
+                        <div class="row justify-content-end">
+                            <nav class="col col-md-8 col-12 text-center mb-4">
+                                <button class="addIncome py-2"><span id="plusSign">+</span>&#160;Dodaj
+                                    Przychód</button>
+                            </nav>
+                            <nav class=" col col-md-4 col-12 text-center">
+                                <a href="/Profile/show" class="text-decoration-none">
+                                    <button type="button" class="negative py-2"><span
+                                            id="goBackSign">&#60;&#60;</span>&#160;Wróć</button>
+                                </a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="col col-md-1 col-2 d-none d-sm-block"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

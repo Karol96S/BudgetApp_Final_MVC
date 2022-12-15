@@ -8,7 +8,7 @@ html,body
 }
 
 body {
-    background-image: url(../obrazki/homePageBackground.jpg);
+    background-image: url(../images/homePageBackground.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;

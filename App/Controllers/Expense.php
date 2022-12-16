@@ -59,4 +59,22 @@ class Expense extends Authenticated
         View::renderTemplate('Expense/success.html');
     }
 
+    public static function getExpense($user_ID, $choice = null, $dateStart = null, $dateEnd= null)
+    {
+        $expense = new Expenses;
+
+        if ($choice == 'currentMonth') {
+            return $expense->currentMonthExpenses($user_ID);
+        }
+
+        else if ($choice == 'lastMonth') {
+            return $expense->lastMonthExpenses($user_ID);
+        }
+
+        else if ($choice == 'custom') {
+            return $expense->lastMonthExpenses($user_ID, $dateStart, $dateEnd);
+        }
+
+    }
+
 }

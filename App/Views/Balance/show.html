@@ -1,0 +1,273 @@
+{% extends "userIsLoggedIn.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/css/CheckBalance.css">
+<script src="/js/pieChart.js"></script>
+    {% endblock %}
+{% block title %} Check Balance {% endblock %}
+
+
+{% block body %}
+
+<section id="workingSpace" class="container-fluid p-0">
+    <div class="row justify-content-center text-center mt-5">
+        <div class="col col-xl-8 col-lg-10 col-md-10 col-11 my-4">
+            <form method="post">
+                <div id="chooseDate" class="col col-12 py-3">
+                    <h2 class="display-6">
+                        Bilans za okres:
+                        {% if (date is empty) or (date == 'currentMonth') %}
+                        01.{{ "now"|date("m.Y") }} - {{ max_date }}
+                        {% endif %}
+
+                        {% if date == 'lastMonth' %}
+                        {{ last_month_start }} - {{ last_month_end }}
+                        {% endif %}
+
+                        {% if date == 'custom' %}
+                        {{ custom-date-start }} - {{ custom-date-end }}
+                        {% endif %}
+                    </h2>
+                    <select name="date" id="date" onchange='if(this.options[this.selectedIndex].value!="custom"){ this.form.submit(); }
+                    else if(this.options[this.selectedIndex].value=="custom"){ $("#myModal").modal("show") }'>
+                        <option value="currentMonth" {% if (date is empty) or (date=='currentMonth' ) %}selected{% endif
+                            %}>Bieżący miesiąc</option>
+                        <option value="lastMonth" {% if (date is empty) or (date=='lastMonth' ) %}selected{% endif %}>
+                            Poprzedni miesiąc</option>
+                        <option value="custom" id="custom" {% if (date is empty) or (date=='custom' ) %}selected{% endif
+                            %}>Niestandardowy</option>
+                    </select>
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-sm" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Pokaż bilans za okres</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="post">
+                                        <div class="form-group text-start">
+                                            <label for="dateStart" class="col-form-label">Od:</label>
+                                            <input type="date" class="form-control" id="dateStart" min="2000-01-01"
+                                                max="<?= date('Y-m-t'); ?>" class="form-control" name="dateStart"
+                                                value="{{ current_date }}" required>
+                                        </div>
+                                        <div class="form-group text-start">
+                                            <label for="dateEnd" class="col-form-label text-start">Do:</label>
+                                            <input type="date" class="form-control" id="dateEnd" min="2000-01-01"
+                                                max="<?= date('Y-m-t'); ?>" class="form-control" name="dateEnd"
+                                                value="{{ max_date }}" required>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Potwierdź</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                        onclick='$("#myModal").modal("hide")'>Wróć</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row justify-content-center text-center">
+        <div class="incomesTableContainer col col-xl-4 col-lg-5 col-md-10 col-11 my-4">
+            <table class="incomesTable container-fluid mx-lg-1 px-2">
+                <thead>
+                    <tr>
+                        <th colspan="3">Przychód Dla Poszczególnych Kategorii</th>
+                    </tr>
+                    <tr>
+                        <th class="positionNumber">Nr. pozycji</th>
+                        <th>Kategoria</th>
+                        <th>Wartość</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set incomeSum = 0 %}
+                    {% for data in income %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ data.name }}</td>
+                        <td>{{ data.amount }} PLN</td>
+                    </tr> 
+                    {% set incomeSum = incomeSum + data.amount %}
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="active-row">
+                        <td colspan="2">SUMA PRZYCHODÓW</td>
+                        <td>{{ incomeSum }} PLN</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="expensesTableContainer col col-xl-4 col-lg-5 col-md-10 col-11 my-4">
+            <table class="expensesTable container-fluid mx-lg-1 px-2">
+                <thead>
+                    <tr>
+                        <th colspan="3">Wydatki Dla Poszczególnych Kategorii</th>
+                    </tr>
+                    <tr>
+                        <th class="positionNumber">Nr. pozycji</th>
+                        <th>Kategoria</th>
+                        <th>Wartość</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set expenseSum = 0 %}
+                    {% for data in expense %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ data.name }}</td>
+                        <td>{{ data.amount }} PLN</td>
+                    </tr> 
+                    {% set expenseSum = expenseSum + data.amount %}
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2">SUMA WYDATKÓW</td>
+                        <td>{{ expenseSum }} PLN</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <section class="container-fluid">
+        <div class="row justify-content-center">
+            <div id="balanceSummary" class="col col-xxl-5 col-xlg-6 col-md-10 col-11 mb-1">
+                <div id="balanceSummaryMain">
+                    <img src="/images/account_balance.png" alt="wallet icon">
+                    {% set balance = incomeSum - expenseSum %}
+                    <h2>Bilans: {{ balance }}</h2>
+                </div>
+                {% if balance < 0 %}
+                <p class="text-danger">Uważaj, wpadasz w długi!</p>
+                {% endif %}
+
+                {% if balance > 0 %}
+                <p class="text-success">Gratulacje. Świetnie zarządzasz finansami!</p>
+                {% endif %}
+                <div class="footerSpacing"></div>
+
+                {% if balance != 0 %}
+                <h2>Diagram wydatków za wybrany okres:</h2>
+                {% endif %}
+
+                {% if income is empty %}
+                <h2>Brak danych do sporządzenia diagramu.</h2>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    <div id="chartContainer" class="row justify-content-center text-center">
+        <div class="col col-xxl-5 col-xlg-6 col-md-10 col-11">
+            <div id="pieChart" style="margin-bottom: 420px;"></div>
+        </div>
+    </div>
+    <div class="row justify-content-center text-center">
+        <div class="incomesTableContainer col col-xl-8 col-11 my-4">
+            <table class="incomesTable container-fluid mx-lg-1 px-2">
+                <thead>
+                    <tr>
+                        <th colspan="5">Szczegółowe Informacje o Przychodach Według Daty</th>
+                    </tr>
+                    <tr>
+                        <th class="positionNumber">Nr. pozycji</th>
+                        <th>Data</th>
+                        <th>Kategoria</th>
+                        <th>Wartość</th>
+                        <th>Komentarz</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set rows = 0 %}
+                    {% for data in income %}
+                    {% set rows = rows + 1 %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ data.date_of_income }}</td>
+                        <td>{{ data.name }}</td>
+                        <td>{{ data.amount }} PLN</td>
+                        <td>{{ data.income_comment }}</td>
+                    </tr> 
+                    {% endfor %}
+                    
+                    {% if rows == 0 %}
+                    <tr>
+                        <td></td>
+                        <td>brak</td>
+                        <td>brak</td>
+                        <td>brak</td>
+                        <td>brak</td>
+                        <td>brak</td>
+                    </tr> 
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-center text-center">
+        <div class="expensesTableContainer col col-xl-8 col-11 my-4">
+            <table class="expensesTable container-fluid mx-lg-1 px-2">
+                <thead>
+                    <tr>
+                        <th colspan="6">Szczegółowe Informacje o Wydatkach Według Daty</th>
+                    </tr>
+                    <tr>
+                        <th class="positionNumber">Nr. pozycji</th>
+                        <th>Data</th>
+                        <th>Kategoria</th>
+                        <th>Sposób płatności</th>
+                        <th>Wartość</th>
+                        <th>Komentarz</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set rows = 0 %}
+                    {% for data in expense %}
+                    {% set rows = rows + 1 %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ data.date_of_expense }}</td>
+                        <td>{{ data.name }}</td>
+                        <td>{{ data.payment_method }}</td>
+                        <td>{{ data.amount }} PLN</td>
+                        <td>{{ data.expense_comment }}</td>
+                    </tr> 
+                    {% endfor %}
+
+                    {% if rows == 0 %}
+                    <tr>
+                        <td></td>
+                        <td>brak</td>
+                        <td>brak</td>
+                        <td>brak</td>
+                        <td>brak</td>
+                        <td>brak</td>
+                    </tr> 
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block footer %}
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+{% endblock %}

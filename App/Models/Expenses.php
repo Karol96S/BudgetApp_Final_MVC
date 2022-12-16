@@ -107,4 +107,135 @@ class Expenses extends \Core\Model
             $this->errors['comment'] = 'Treść komentarza nie może przekroczyć 50 znaków!';
         }
     }
+
+    public function currentMonthExpenses($user_ID)
+    {
+
+        $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.amount, expenses.date_of_expense, expenses.expense_comment
+        FROM expenses, expenses_category_assigned_to_users, payment_methods_assigned_to_users
+        WHERE expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
+        AND expenses.payment_method_assigned_to_user_id = payment_methods_assigned_to_users.id
+        AND expenses.user_id = expenses_category_assigned_to_users.user_id
+        AND expenses.user_id = payment_methods_assigned_to_users.user_id
+        AND expenses.user_id = '$user_ID'
+        AND MONTH(date_of_expense) = MONTH(CURRENT_DATE)
+        AND YEAR(date_of_expense) = YEAR(CURRENT_DATE)";
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function lastMonthExpenses($user_ID)
+    {
+
+            $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.amount, expenses.date_of_expense, expenses.expense_comment
+            FROM expenses, expenses_category_assigned_to_users, payment_methods_assigned_to_users
+            WHERE expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
+            AND expenses.payment_method_assigned_to_user_id = payment_methods_assigned_to_users.id
+            AND expenses.user_id = expenses_category_assigned_to_users.user_id
+            AND expenses.user_id = payment_methods_assigned_to_users.user_id
+            AND expenses.user_id = '$user_ID'
+            AND MONTH(date_of_expense) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
+            AND YEAR(date_of_expense) = YEAR(CURRENT_DATE)";
+
+            $db = static::getDB();
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+    
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function customExpenses($user_ID, $userInputDateStart, $userInputDateEnd)
+    {
+
+            $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.amount, expenses.date_of_expense, expenses.expense_comment
+            FROM expenses, expenses_category_assigned_to_users, payment_methods_assigned_to_users
+            WHERE expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
+            AND expenses.payment_method_assigned_to_user_id = payment_methods_assigned_to_users.id
+            AND expenses.user_id = expenses_category_assigned_to_users.user_id
+            AND expenses.user_id = payment_methods_assigned_to_users.user_id
+            AND expenses.user_id = '$user_ID'
+            AND date_of_expense BETWEEN '$userInputDateStart' AND '$userInputDateEnd'";
+
+            $db = static::getDB();
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+    
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+
+    /*public static function changeFromEnglishToPolish()
+    {
+        foreach ($expensesDetailedData as &$expensesDetailed) {
+            foreach ($expensesDetailed as &$name['name']) {
+    
+                switch ($name['name']) {
+                    case "Books":
+                        $name['name'] = "Książki";
+                        break;
+                    case "Food":
+                        $name['name'] = "Jedzenie";
+                        break;
+                    case "Apartments":
+                        $name['name'] = "Mieszkanie";
+                        break;
+                    case "Telecommunication":
+                        $name['name'] = "Telekomunikacja";
+                        break;
+                    case "Health":
+                        $name['name'] = "Opieka zdrowotna";
+                        break;
+                    case "Clothes":
+                        $name['name'] = "Ubranie";
+                        break;
+                    case "Hygiene":
+                        $name['name'] = "Higiena";
+                        break;
+                    case "Kids":
+                        $name['name'] = "Dzieci";
+                        break;
+                    case "Recreation":
+                        $name['name'] = "Rozrywka";
+                        break;
+                    case "Trip":
+                        $name['name'] = "Wycieczka";
+                        break;
+                    case "Savings":
+                        $name['name'] = "Oszczędności";
+                        break;
+                    case "For Retirement":
+                        $name['name'] = "Na złotą jesień, czyli emeryturę";
+                        break;
+                    case "Debt Repayment":
+                        $name['name'] = "Spłata długów";
+                        break;
+                    case "Gift":
+                        $name['name'] = "Darowizna";
+                        break;
+                    case "Another":
+                        $name['name'] = "Inne";
+                        break;
+                }
+            }
+    
+    
+            foreach ($expensesDetailed as &$name['payment_method']) {
+    
+                switch ($name['payment_method']) {
+                    case "Cash":
+                        $name['payment_method'] = "Gotówka";
+                        break;
+                    case "Debit Card":
+                        $name['payment_method'] = "Karta Debetowa";
+                        break;
+                    case "Credit Card":
+                        $name['payment_method'] = "Karta Kredytowa";
+                        break;
+                }
+            }
+    }*/
 }

@@ -27,7 +27,7 @@ class Login extends \Core\Controller
             //Flash::addMessage('Login successful');
 
             $this->redirect("/profile/show");
-            //$this->redirect(Auth::getReturnToPage());
+            $this->redirect(Auth::getReturnToPage());
 
         } else {
 

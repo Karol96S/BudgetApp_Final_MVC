@@ -2,8 +2,7 @@
 
 {% block style %}
 <link rel="stylesheet" href="/css/CheckBalance.css">
-<script src="/js/pieChart.js"></script>
-    {% endblock %}
+{% endblock %}
 {% block title %} Check Balance {% endblock %}
 
 
@@ -12,12 +11,12 @@
 <section id="workingSpace" class="container-fluid p-0">
     <div class="row justify-content-center text-center mt-5">
         <div class="col col-xl-8 col-lg-10 col-md-10 col-11 my-4">
-            <form method="post">
+            <form method="post" action="/balance/show">
                 <div id="chooseDate" class="col col-12 py-3">
                     <h2 class="display-6">
                         Bilans za okres:
                         {% if (date is empty) or (date == 'currentMonth') %}
-                        01.{{ "now"|date("m.Y") }} - {{ max_date }}
+                        01.{{ "now"|date("m.Y") }} - {{ max_date_dot }}
                         {% endif %}
 
                         {% if date == 'lastMonth' %}
@@ -25,16 +24,16 @@
                         {% endif %}
 
                         {% if date == 'custom' %}
-                        {{ custom-date-start }} - {{ custom-date-end }}
+                        {{ custom_date_start }} - {{ custom_date_end }}
                         {% endif %}
                     </h2>
                     <select name="date" id="date" onchange='if(this.options[this.selectedIndex].value!="custom"){ this.form.submit(); }
                     else if(this.options[this.selectedIndex].value=="custom"){ $("#myModal").modal("show") }'>
                         <option value="currentMonth" {% if (date is empty) or (date=='currentMonth' ) %}selected{% endif
                             %}>Bieżący miesiąc</option>
-                        <option value="lastMonth" {% if (date is empty) or (date=='lastMonth' ) %}selected{% endif %}>
+                        <option value="lastMonth" {% if (date=='lastMonth') %}selected{% endif %}>
                             Poprzedni miesiąc</option>
-                        <option value="custom" id="custom" {% if (date is empty) or (date=='custom' ) %}selected{% endif
+                        <option value="custom" id="custom" {% if (date=='custom') %}selected{% endif
                             %}>Niestandardowy</option>
                     </select>
                     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -49,13 +48,13 @@
                                         <div class="form-group text-start">
                                             <label for="dateStart" class="col-form-label">Od:</label>
                                             <input type="date" class="form-control" id="dateStart" min="2000-01-01"
-                                                max="<?= date('Y-m-t'); ?>" class="form-control" name="dateStart"
+                                                max="{{ max_date }}" class="form-control" name="dateStart"
                                                 value="{{ current_date }}" required>
                                         </div>
                                         <div class="form-group text-start">
                                             <label for="dateEnd" class="col-form-label text-start">Do:</label>
-                                            <input type="date" class="form-control" id="dateEnd" min="2000-01-01"
-                                                max="<?= date('Y-m-t'); ?>" class="form-control" name="dateEnd"
+                                            <input type="date" class="form-control" id="dateEnd" min="{{ custom_date_end }}"
+                                                max="{{ max_date }}" class="form-control" name="dateEnd"
                                                 value="{{ max_date }}" required>
                                         </div>
                                     </form>
@@ -87,7 +86,7 @@
                 </thead>
                 <tbody>
                     {% set incomeSum = 0 %}
-                    {% for data in income %}
+                    {% for data in incomeByCategory %}
                     <tr>
                         <td>{{ loop.index }}</td>
                         <td>{{ data.name }}</td>
@@ -118,7 +117,7 @@
                 </thead>
                 <tbody>
                     {% set expenseSum = 0 %}
-                    {% for data in expense %}
+                    {% for data in expenseByCategory %}
                     <tr>
                         <td>{{ loop.index }}</td>
                         <td>{{ data.name }}</td>
@@ -142,7 +141,7 @@
                 <div id="balanceSummaryMain">
                     <img src="/images/account_balance.png" alt="wallet icon">
                     {% set balance = incomeSum - expenseSum %}
-                    <h2>Bilans: {{ balance }}</h2>
+                    <h2>Bilans: {{ balance }} PLN</h2>
                 </div>
                 {% if balance < 0 %}
                 <p class="text-danger">Uważaj, wpadasz w długi!</p>
@@ -269,5 +268,28 @@
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script>
+    window.onload = function() {
+
+
+        var chart = new CanvasJS.Chart("pieChart", {
+            animationEnabled: true,
+            title: {
+                text: ""
+            },
+            subtitles: [{
+                text: ""
+            }],
+            data: [{
+                type: "pie",
+                yValueFormatString: "#,##0.00\"%\"",
+                indexLabel: "{label} ({y})",
+                dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+            }]
+        });
+        chart.render();
+
+    }
+</script>
 
 {% endblock %}

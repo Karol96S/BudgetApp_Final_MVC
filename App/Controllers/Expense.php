@@ -59,11 +59,11 @@ class Expense extends Authenticated
         View::renderTemplate('Expense/success.html');
     }
 
-    public static function getExpense($user_ID, $choice = null, $dateStart = null, $dateEnd= null)
+    public static function getExpense($user_ID, $choice = "", $dateStart = "", $dateEnd = "")
     {
         $expense = new Expenses;
 
-        if ($choice == 'currentMonth') {
+        if (($choice == 'currentMonth') || ($choice == "")) {
             return $expense->currentMonthExpenses($user_ID);
         }
 
@@ -72,9 +72,26 @@ class Expense extends Authenticated
         }
 
         else if ($choice == 'custom') {
-            return $expense->lastMonthExpenses($user_ID, $dateStart, $dateEnd);
+            return $expense->customExpenses($user_ID, $dateStart, $dateEnd);
         }
 
+    }
+
+    public static function getExpenseByCategory($user_ID, $choice = "", $dateStart = "", $dateEnd = "")
+    {
+        $expenseByCategory = new Expenses;
+
+        if (($choice == 'currentMonth') || ($choice == "")) {
+            return $expenseByCategory->currentMonthExpensesByCategory($user_ID);
+        }
+
+        else if ($choice == 'lastMonth') {
+            return $expenseByCategory->lastMonthExpensesByCategory($user_ID);
+        }
+
+        else if ($choice == 'custom') {
+            return $expenseByCategory->customExpensesByCategory($user_ID, $dateStart, $dateEnd);
+        }
     }
 
 }

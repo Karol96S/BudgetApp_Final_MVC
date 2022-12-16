@@ -58,11 +58,11 @@ class Income extends Authenticated
         View::renderTemplate('Income/success.html');
     }
 
-    public static function getIncome($user_ID, $choice = null, $dateStart = null, $dateEnd= null)
+    public static function getIncome($user_ID, $choice = "", $dateStart = "", $dateEnd = "")
     {
         $income = new Incomes;
 
-        if ($choice == 'currentMonth' || ($choice == null)) {
+        if (($choice == 'currentMonth') || ($choice == "")) {
             return $income->currentMonthIncomes($user_ID);
         }
 
@@ -71,9 +71,26 @@ class Income extends Authenticated
         }
 
         else if ($choice == 'custom') {
-            return $income->lastMonthIncomes($user_ID, $dateStart, $dateEnd);
+            return $income->customIncomes($user_ID, $dateStart, $dateEnd);
         }
 
+    }
+
+    public static function getIncomeByCategory($user_ID, $choice = "", $dateStart = "", $dateEnd = "")
+    {
+        $incomeByCategory = new Incomes;
+
+        if (($choice == 'currentMonth') || ($choice == "")) {
+            return $incomeByCategory->currentMonthIncomesByCategory($user_ID);
+        }
+
+        else if ($choice == 'lastMonth') {
+            return $incomeByCategory->lastMonthIncomesByCategory($user_ID);
+        }
+
+        else if ($choice == 'custom') {
+            return $incomeByCategory->customIncomesByCategory($user_ID, $dateStart, $dateEnd);
+        }
     }
 
 }

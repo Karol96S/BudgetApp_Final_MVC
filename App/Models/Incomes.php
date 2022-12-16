@@ -103,7 +103,8 @@ class Incomes extends \Core\Model
             AND incomes.user_id = incomes_category_assigned_to_users.user_id
             AND incomes.user_id = '$user_ID'
             AND MONTH(date_of_income) = MONTH(CURRENT_DATE)
-            AND YEAR(date_of_income) = YEAR(CURRENT_DATE)";
+            AND YEAR(date_of_income) = YEAR(CURRENT_DATE)
+            ORDER BY DATE(date_of_income) DESC";
 
         $db = static::getDB();
         $stmt = $db->prepare($sql);
@@ -115,36 +116,93 @@ class Incomes extends \Core\Model
     public function lastMonthIncomes($user_ID)
     {
 
-            $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.date_of_income, incomes.income_comment
+        $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.date_of_income, incomes.income_comment
             FROM incomes, incomes_category_assigned_to_users
             WHERE incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
             AND incomes.user_id = incomes_category_assigned_to_users.user_id
             AND incomes.user_id = '$user_ID'
             AND MONTH(date_of_income) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
-            AND YEAR(date_of_income) = YEAR(CURRENT_DATE)";
+            AND YEAR(date_of_income) = YEAR(CURRENT_DATE)
+            ORDER BY DATE(date_of_income) DESC";
 
-            $db = static::getDB();
-            $stmt = $db->prepare($sql);
-            $stmt->execute();
-    
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function customIncomes($user_ID, $userInputDateStart, $userInputDateEnd)
     {
 
-            $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.date_of_income, incomes.income_comment
+        $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.date_of_income, incomes.income_comment
             FROM incomes, incomes_category_assigned_to_users
             WHERE incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
             AND incomes.user_id = incomes_category_assigned_to_users.user_id
             AND incomes.user_id = '$user_ID'
-            AND date_of_income BETWEEN '$userInputDateStart' AND '$userInputDateEnd'";
+            AND date_of_income BETWEEN '$userInputDateStart' AND '$userInputDateEnd'
+            ORDER BY DATE(date_of_income) DESC";
 
-            $db = static::getDB();
-            $stmt = $db->prepare($sql);
-            $stmt->execute();
-    
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
 
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function currentMonthIncomesByCategory($user_ID)
+    {
+
+        $sql = "SELECT SUM(incomes.amount) AS amount, incomes_category_assigned_to_users.name
+        FROM incomes, incomes_category_assigned_to_users
+        WHERE incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
+        AND incomes.user_id = incomes_category_assigned_to_users.user_id
+        AND incomes.user_id = '$user_ID'
+        AND MONTH(date_of_income) = MONTH(CURRENT_DATE)
+        AND YEAR(date_of_income) = YEAR(CURRENT_DATE)
+        GROUP BY incomes_category_assigned_to_users.name";
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function lastMonthIncomesByCategory($user_ID)
+    {
+
+        $sql = "SELECT SUM(incomes.amount) AS amount, incomes_category_assigned_to_users.name
+        FROM incomes, incomes_category_assigned_to_users
+        WHERE incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
+        AND incomes.user_id = incomes_category_assigned_to_users.user_id
+        AND incomes.user_id = '$user_ID'
+        AND MONTH(date_of_income) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
+        AND YEAR(date_of_income) = YEAR(CURRENT_DATE)
+        GROUP BY incomes_category_assigned_to_users.name";
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function customIncomesByCategory($user_ID, $userInputDateStart, $userInputDateEnd)
+    {
+
+        $sql = "SELECT SUM(incomes.amount) AS amount, incomes_category_assigned_to_users.name
+        FROM incomes, incomes_category_assigned_to_users
+        WHERE incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
+        AND incomes.user_id = incomes_category_assigned_to_users.user_id
+        AND incomes.user_id = '$user_ID'
+        AND date_of_income BETWEEN '$userInputDateStart' AND '$userInputDateEnd'
+        GROUP BY incomes_category_assigned_to_users.name";
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

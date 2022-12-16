@@ -37,8 +37,10 @@ class View
             $twig->addGlobal('current_user', \App\Auth::getUser());
             $twig->addGlobal('flash_messages', \App\Flash::getMessages());
             $twig->addGlobal('date', \App\Controllers\Balance::getDateValue());
-            $twig->addGlobal('max_date', date('t.m.Y'));
-            $twig->addGlobal('current_date', date('Y.m.d'));
+            $twig->addGlobal('max_date', date('Y-m-t'));
+            $twig->addGlobal('current_date', date('Y-m-d'));
+            $twig->addGlobal('current_date_dot', date('d.m.Y'));
+            $twig->addGlobal('max_date_dot', date('t.m.Y'));
             $twig->addGlobal(
                 'last_month_start',
                 date('d.m.Y', (mktime(0, 0, 0, date("m") - 1, 01, date("Y"))))
@@ -47,7 +49,7 @@ class View
                 'last_month_end',
                 date('d.m.Y', (mktime(0, 0, 0, date("m") - 1, cal_days_in_month(CAL_GREGORIAN, date("m") - 1, date("Y")), date("Y"))))
             );
-            $twig->addGlobal('custom_date_start', \App\Controllers\Balance::getCustomDateEnd());
+            $twig->addGlobal('custom_date_start', \App\Controllers\Balance::getCustomDateStart());
             $twig->addGlobal('custom_date_end', \App\Controllers\Balance::getCustomDateEnd());
         }
 

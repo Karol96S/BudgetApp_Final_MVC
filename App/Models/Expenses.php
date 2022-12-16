@@ -119,7 +119,8 @@ class Expenses extends \Core\Model
         AND expenses.user_id = payment_methods_assigned_to_users.user_id
         AND expenses.user_id = '$user_ID'
         AND MONTH(date_of_expense) = MONTH(CURRENT_DATE)
-        AND YEAR(date_of_expense) = YEAR(CURRENT_DATE)";
+        AND YEAR(date_of_expense) = YEAR(CURRENT_DATE)
+        ORDER BY DATE(date_of_expense) DESC";
 
         $db = static::getDB();
         $stmt = $db->prepare($sql);
@@ -131,7 +132,7 @@ class Expenses extends \Core\Model
     public function lastMonthExpenses($user_ID)
     {
 
-            $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.amount, expenses.date_of_expense, expenses.expense_comment
+        $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.amount, expenses.date_of_expense, expenses.expense_comment
             FROM expenses, expenses_category_assigned_to_users, payment_methods_assigned_to_users
             WHERE expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
             AND expenses.payment_method_assigned_to_user_id = payment_methods_assigned_to_users.id
@@ -139,33 +140,88 @@ class Expenses extends \Core\Model
             AND expenses.user_id = payment_methods_assigned_to_users.user_id
             AND expenses.user_id = '$user_ID'
             AND MONTH(date_of_expense) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
-            AND YEAR(date_of_expense) = YEAR(CURRENT_DATE)";
+            AND YEAR(date_of_expense) = YEAR(CURRENT_DATE)
+            ORDER BY DATE(date_of_expense) DESC";
 
-            $db = static::getDB();
-            $stmt = $db->prepare($sql);
-            $stmt->execute();
-    
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function customExpenses($user_ID, $userInputDateStart, $userInputDateEnd)
     {
 
-            $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.amount, expenses.date_of_expense, expenses.expense_comment
+        $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.amount, expenses.date_of_expense, expenses.expense_comment
             FROM expenses, expenses_category_assigned_to_users, payment_methods_assigned_to_users
             WHERE expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
             AND expenses.payment_method_assigned_to_user_id = payment_methods_assigned_to_users.id
             AND expenses.user_id = expenses_category_assigned_to_users.user_id
             AND expenses.user_id = payment_methods_assigned_to_users.user_id
             AND expenses.user_id = '$user_ID'
-            AND date_of_expense BETWEEN '$userInputDateStart' AND '$userInputDateEnd'";
+            AND date_of_expense BETWEEN '$userInputDateStart' AND '$userInputDateEnd'
+            ORDER BY DATE(date_of_expense) DESC";
 
-            $db = static::getDB();
-            $stmt = $db->prepare($sql);
-            $stmt->execute();
-    
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
 
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function currentMonthExpensesByCategory($user_ID)
+    {
+        $sql = "SELECT SUM(expenses.amount) AS amount, expenses_category_assigned_to_users.name
+        FROM expenses, expenses_category_assigned_to_users
+        WHERE expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
+        AND expenses.user_id = expenses_category_assigned_to_users.user_id
+        AND expenses.user_id = '$user_ID';
+        AND MONTH(date_of_expense) = MONTH(CURRENT_DATE)
+        AND YEAR(date_of_expense) = YEAR(CURRENT_DATE)
+        GROUP BY expenses_category_assigned_to_users.name";
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function lastMonthExpensesByCategory($user_ID)
+    {
+        $sql = "SELECT SUM(expenses.amount) AS amount, expenses_category_assigned_to_users.name
+        FROM expenses, expenses_category_assigned_to_users
+        WHERE expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
+        AND expenses.user_id = expenses_category_assigned_to_users.user_id
+        AND expenses.user_id = '$user_ID'
+        AND MONTH(date_of_expense) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
+        AND YEAR(date_of_expense) = YEAR(CURRENT_DATE)
+        GROUP BY expenses_category_assigned_to_users.name";
+        
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function customExpensesByCategory($user_ID, $userInputDateStart, $userInputDateEnd)
+    {
+
+        $sql = "SELECT SUM(expenses.amount) AS amount, expenses_category_assigned_to_users.name
+        FROM expenses, expenses_category_assigned_to_users
+        WHERE expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
+        AND expenses.user_id = expenses_category_assigned_to_users.user_id
+        AND expenses.user_id = '$user_ID'
+        AND date_of_expense BETWEEN '$userInputDateStart' AND '$userInputDateEnd'
+        GROUP BY expenses_category_assigned_to_users.name";
+        
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /*public static function changeFromEnglishToPolish()

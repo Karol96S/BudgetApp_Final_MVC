@@ -2,7 +2,8 @@
 
 namespace Core;
 
-class View{
+class View
+{
 
     public static function render($view, $args = [])
     {
@@ -29,17 +30,27 @@ class View{
     public static function getTemplate(string $template, array $args = [])
     {
         static $twig = null;
- 
-        if ($twig === null)
-        {
+
+        if ($twig === null) {
             $loader = new \Twig\Loader\FilesystemLoader('../App/Views');
             $twig = new \Twig\Environment($loader);
             $twig->addGlobal('current_user', \App\Auth::getUser());
             $twig->addGlobal('flash_messages', \App\Flash::getMessages());
-            $twig->addGlobal('max_date', date('Y-m-t'));
-            $twig->addGlobal('current_date', date('Y-m-d'));
+            $twig->addGlobal('date', \App\Controllers\Balance::getDateValue());
+            $twig->addGlobal('max_date', date('t.m.Y'));
+            $twig->addGlobal('current_date', date('Y.m.d'));
+            $twig->addGlobal(
+                'last_month_start',
+                date('d.m.Y', (mktime(0, 0, 0, date("m") - 1, 01, date("Y"))))
+            );
+            $twig->addGlobal(
+                'last_month_end',
+                date('d.m.Y', (mktime(0, 0, 0, date("m") - 1, cal_days_in_month(CAL_GREGORIAN, date("m") - 1, date("Y")), date("Y"))))
+            );
+            $twig->addGlobal('custom_date_start', \App\Controllers\Balance::getCustomDateEnd());
+            $twig->addGlobal('custom_date_end', \App\Controllers\Balance::getCustomDateEnd());
         }
- 
+
         return $twig->render($template, $args);
     }
 }

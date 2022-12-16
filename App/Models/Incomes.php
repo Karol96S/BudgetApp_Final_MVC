@@ -93,4 +93,58 @@ class Incomes extends \Core\Model
             $this->errors['comment'] = 'Treść komentarza nie może przekroczyć 50 znaków!';
         }
     }
+
+    public function currentMonthIncomes($user_ID)
+    {
+
+        $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.date_of_income, incomes.income_comment
+            FROM incomes, incomes_category_assigned_to_users
+            WHERE incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
+            AND incomes.user_id = incomes_category_assigned_to_users.user_id
+            AND incomes.user_id = '$user_ID'
+            AND MONTH(date_of_income) = MONTH(CURRENT_DATE)
+            AND YEAR(date_of_income) = YEAR(CURRENT_DATE)";
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function lastMonthIncomes($user_ID)
+    {
+
+            $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.date_of_income, incomes.income_comment
+            FROM incomes, incomes_category_assigned_to_users
+            WHERE incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
+            AND incomes.user_id = incomes_category_assigned_to_users.user_id
+            AND incomes.user_id = '$user_ID'
+            AND MONTH(date_of_income) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
+            AND YEAR(date_of_income) = YEAR(CURRENT_DATE)";
+
+            $db = static::getDB();
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+    
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function customIncomes($user_ID, $userInputDateStart, $userInputDateEnd)
+    {
+
+            $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.date_of_income, incomes.income_comment
+            FROM incomes, incomes_category_assigned_to_users
+            WHERE incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
+            AND incomes.user_id = incomes_category_assigned_to_users.user_id
+            AND incomes.user_id = '$user_ID'
+            AND date_of_income BETWEEN '$userInputDateStart' AND '$userInputDateEnd'";
+
+            $db = static::getDB();
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+    
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    }
 }

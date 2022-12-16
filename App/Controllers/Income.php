@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use \Core\View;
 use \App\Auth;
-use \App\Flash;
 use \App\Models\Incomes;
 
 /**
@@ -57,6 +56,24 @@ class Income extends Authenticated
     public function successAction()
     {
         View::renderTemplate('Income/success.html');
+    }
+
+    public static function getIncome($user_ID, $choice = null, $dateStart = null, $dateEnd= null)
+    {
+        $income = new Incomes;
+
+        if ($choice == 'currentMonth' || ($choice == null)) {
+            return $income->currentMonthIncomes($user_ID);
+        }
+
+        else if ($choice == 'lastMonth') {
+            return $income->lastMonthIncomes($user_ID);
+        }
+
+        else if ($choice == 'custom') {
+            return $income->lastMonthIncomes($user_ID, $dateStart, $dateEnd);
+        }
+
     }
 
 }

@@ -34,7 +34,7 @@ class Balance extends Authenticated
 
             $this->expense = Expense::getExpense($this->user->id);
             $this->expenseByCategory = Expense::getExpenseByCategory($this->user->id);
-            //$this->pieChart = static::PieChartData($this->expenseByCategory);
+            $_SESSION['expenseByCategory'] = $this->expenseByCategory;
 
         } else if ($_POST['date'] == 'lastMonth') {
 
@@ -43,7 +43,7 @@ class Balance extends Authenticated
 
             $this->expense = Expense::getExpense($this->user->id, 'lastMonth');
             $this->expenseByCategory = Expense::getExpenseByCategory($this->user->id, 'lastMonth');
-            //$this->pieChart = static::PieChartData($this->expenseByCategory);
+            $_SESSION['expenseByCategory'] = $this->expenseByCategory;
 
         } else if ($_POST['date'] == 'custom') {
 
@@ -52,7 +52,7 @@ class Balance extends Authenticated
             
             $this->expense = Expense::getExpense($this->user->id, 'custom', $_POST['dateStart'], $_POST['dateEnd']);
             $this->expenseByCategory = Expense::getExpenseByCategory($this->user->id, 'custom', $_POST['dateStart'], $_POST['dateEnd']);
-            //$this->pieChart = static::PieChartData($this->expenseByCategory);
+            $_SESSION['expenseByCategory'] = $this->expenseByCategory;
         }
 
         View::renderTemplate('/Balance/show.html', [

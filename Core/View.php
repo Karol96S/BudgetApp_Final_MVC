@@ -51,6 +51,7 @@ class View
             );
             $twig->addGlobal('custom_date_start', \App\Controllers\Balance::getCustomDateStart());
             $twig->addGlobal('custom_date_end', \App\Controllers\Balance::getCustomDateEnd());
+            $twig->addGlobal('pieChartExpenses', \App\Controllers\Expense::getPieChartExpenseData());
         }
 
         return $twig->render($template, $args);

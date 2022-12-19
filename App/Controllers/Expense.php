@@ -18,7 +18,7 @@ class Expense extends Authenticated
     protected function before()
     {
         parent::before();
-        
+
         $this->user = Auth::getUser();
     }
 
@@ -34,13 +34,11 @@ class Expense extends Authenticated
         if ($expense->save()) {
 
             $this->redirect('/expense/success');
-
         } else {
 
             View::renderTemplate('Expense/add.html', [
                 'expense' => $expense
             ]);
-
         }
     }
 
@@ -65,16 +63,11 @@ class Expense extends Authenticated
 
         if (($choice == 'currentMonth') || ($choice == "")) {
             return $expense->currentMonthExpenses($user_ID);
-        }
-
-        else if ($choice == 'lastMonth') {
+        } else if ($choice == 'lastMonth') {
             return $expense->lastMonthExpenses($user_ID);
-        }
-
-        else if ($choice == 'custom') {
+        } else if ($choice == 'custom') {
             return $expense->customExpenses($user_ID, $dateStart, $dateEnd);
         }
-
     }
 
     public static function getExpenseByCategory($user_ID, $choice = "", $dateStart = "", $dateEnd = "")
@@ -83,15 +76,37 @@ class Expense extends Authenticated
 
         if (($choice == 'currentMonth') || ($choice == "")) {
             return $expenseByCategory->currentMonthExpensesByCategory($user_ID);
-        }
-
-        else if ($choice == 'lastMonth') {
+        } else if ($choice == 'lastMonth') {
             return $expenseByCategory->lastMonthExpensesByCategory($user_ID);
-        }
-
-        else if ($choice == 'custom') {
+        } else if ($choice == 'custom') {
             return $expenseByCategory->customExpensesByCategory($user_ID, $dateStart, $dateEnd);
         }
     }
 
+    public static function getPieChartExpenseData()
+    {
+        $expenseByCategory = $_SESSION['expenseByCategory'];
+
+        if (count($expenseByCategory) > 0) {
+
+            $expenseIterator = 1;
+            $dataPoints = "[";
+
+            foreach ($expenseByCategory as $expense) {
+
+                if ($expenseIterator < count($expenseByCategory)) {
+                    $dataPoints = $dataPoints . "{y: " . $expense['amount'] . ', label: "' . $expense['name'] . '"},';
+                    $expenseIterator++;
+                }
+            }
+
+            if ($expenseIterator == count($expenseByCategory)) {
+                $dataPoints = $dataPoints . "{y: " . $expense['amount'] . ', label: "' . $expense['name'] . '"}]';
+                $expenseIterator++;
+            }
+
+            return $dataPoints;
+        }
+    }
+    
 }

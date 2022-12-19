@@ -268,9 +268,12 @@
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
 <script>
     window.onload = function() {
-
+        let pieChartExpenses = '{{pieChartExpenses}}';
+        pieChartExpenses = pieChartExpenses.replace(/&quot;/g, '\"');
+        console.log(pieChartExpenses);
 
         var chart = new CanvasJS.Chart("pieChart", {
             animationEnabled: true,
@@ -284,7 +287,7 @@
                 type: "pie",
                 yValueFormatString: "#,##0.00\"%\"",
                 indexLabel: "{label} ({y})",
-                dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+                dataPoints: pieChartExpenses
             }]
         });
         chart.render();

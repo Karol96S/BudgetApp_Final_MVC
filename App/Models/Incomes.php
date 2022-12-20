@@ -110,7 +110,9 @@ class Incomes extends \Core\Model
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $incomes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($incomes);
     }
 
     public function lastMonthIncomes($user_ID)
@@ -129,7 +131,9 @@ class Incomes extends \Core\Model
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $incomes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($incomes);
     }
 
     public function customIncomes($user_ID, $userInputDateStart, $userInputDateEnd)
@@ -147,7 +151,9 @@ class Incomes extends \Core\Model
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $incomes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($incomes);
     }
 
     public function currentMonthIncomesByCategory($user_ID)
@@ -160,13 +166,16 @@ class Incomes extends \Core\Model
         AND incomes.user_id = '$user_ID'
         AND MONTH(date_of_income) = MONTH(CURRENT_DATE)
         AND YEAR(date_of_income) = YEAR(CURRENT_DATE)
-        GROUP BY incomes_category_assigned_to_users.name";
+        GROUP BY incomes_category_assigned_to_users.name
+        ORDER BY amount DESC";
 
         $db = static::getDB();
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $incomes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($incomes);
     }
 
     public function lastMonthIncomesByCategory($user_ID)
@@ -179,13 +188,16 @@ class Incomes extends \Core\Model
         AND incomes.user_id = '$user_ID'
         AND MONTH(date_of_income) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
         AND YEAR(date_of_income) = YEAR(CURRENT_DATE)
-        GROUP BY incomes_category_assigned_to_users.name";
+        GROUP BY incomes_category_assigned_to_users.name
+        ORDER BY amount DESC";
 
         $db = static::getDB();
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $incomes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($incomes);
     }
 
     public function customIncomesByCategory($user_ID, $userInputDateStart, $userInputDateEnd)
@@ -197,12 +209,120 @@ class Incomes extends \Core\Model
         AND incomes.user_id = incomes_category_assigned_to_users.user_id
         AND incomes.user_id = '$user_ID'
         AND date_of_income BETWEEN '$userInputDateStart' AND '$userInputDateEnd'
-        GROUP BY incomes_category_assigned_to_users.name";
+        GROUP BY incomes_category_assigned_to_users.name
+        ORDER BY amount DESC";
 
         $db = static::getDB();
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $incomes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($incomes);
+    }
+
+    public static function changeFromEnglishToPolish($incomesDetailedData)
+    {
+
+        if (!$incomesDetailedData) return false;
+
+        foreach ($incomesDetailedData as &$incomesData) {
+            foreach ($incomesData as &$name['name']) {
+    
+                switch ($name['name']) {
+                    case "Salary":
+                        $name['name'] = "Wynagrodzenie";
+                        break;
+                    case "Interest":
+                        $name['name'] = "Odsetki bankowe";
+                        break;
+                    case "Allegro":
+                        $name['name'] = "Sprzedaż na allegro";
+                        break;
+                    case "Another":
+                        $name['name'] = "Inne";
+                        break;
+                }
+            }
+        }
+
+        foreach ($incomesDetailedData as &$incomesDetailed) {
+            foreach ($incomesDetailed as &$name['name']) {
+
+                switch ($name['name']) {
+                    case "Salary":
+                        $name['name'] = "Wynagrodzenie";
+                        break;
+                    case "Interest":
+                        $name['name'] = "Odsetki bankowe";
+                        break;
+                    case "Allegro":
+                        $name['name'] = "Sprzedaż na allegro";
+                        break;
+                    case "Another":
+                        $name['name'] = "Inne";
+                        break;
+                }
+            }
+        }
+
+        return $incomesDetailedData;
+    }
+
+    public static function getIncome($user_ID, $choice = "", $dateStart = "", $dateEnd = "")
+    {
+        $income = new Incomes;
+
+        if (($choice == 'currentMonth') || ($choice == "")) {
+            return $income->currentMonthIncomes($user_ID);
+        }
+
+        else if ($choice == 'lastMonth') {
+            return $income->lastMonthIncomes($user_ID);
+        }
+
+        else if ($choice == 'custom') {
+            return $income->customIncomes($user_ID, $dateStart, $dateEnd);
+        }
+
+    }
+
+    public static function getIncomeByCategory($user_ID, $choice = "", $dateStart = "", $dateEnd = "")
+    {
+        $incomeByCategory = new Incomes;
+
+        if (($choice == 'currentMonth') || ($choice == "")) {
+            return $incomeByCategory->currentMonthIncomesByCategory($user_ID);
+        }
+
+        else if ($choice == 'lastMonth') {
+            return $incomeByCategory->lastMonthIncomesByCategory($user_ID);
+        }
+
+        else if ($choice == 'custom') {
+            return $incomeByCategory->customIncomesByCategory($user_ID, $dateStart, $dateEnd);
+        }
+    }
+
+    public static function getIncomeByCategoryPieChartData()
+    {
+        if (($_SESSION['incomeByCategory'])) {
+            $incomeByCategory = $_SESSION['incomeByCategory'];
+            $dataPoints = [];
+            $incomeSum = 0;
+
+            foreach ($incomeByCategory as $income) {
+
+                $incomeSum += $income['amount'];
+            }
+
+            foreach ($incomeByCategory as $data) {
+
+                $incomePercentage = $data['amount'] / $incomeSum * 100;
+                $newArray = array("label" => $data['name'], "y" => $incomePercentage);
+                array_push($dataPoints, $newArray);
+            }
+            return $dataPoints;
+        }
     }
 }

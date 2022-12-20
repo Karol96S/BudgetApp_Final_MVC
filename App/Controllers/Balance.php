@@ -27,32 +27,32 @@ class Balance extends Authenticated
      */
     public function showAction()
     {
-        if (!isset($_POST['date']) || ($_POST['date'] == 'currentMonth')) {
+        if ((!isset($_POST['date'])) || ($_POST['date'] == 'currentMonth')) {
 
-            $this->income = Income::getIncome($this->user->id);
-            $this->incomeByCategory = Income::getIncomeByCategory($this->user->id);
-
-            $this->expense = Expense::getExpense($this->user->id);
-            $this->expenseByCategory = Expense::getExpenseByCategory($this->user->id);
-            //$this->pieChart = static::PieChartData($this->expenseByCategory);
+            $this->income = Incomes::getIncome($this->user->id);
+            $this->incomeByCategory = Incomes::getIncomeByCategory($this->user->id);
+            $this->expense = Expenses::getExpense($this->user->id);
+            $this->expenseByCategory = Expenses::getExpenseByCategory($this->user->id);
+            $_SESSION['expenseByCategory'] = $this->expenseByCategory;
+            $_SESSION['incomeByCategory'] = $this->incomeByCategory;
 
         } else if ($_POST['date'] == 'lastMonth') {
 
-            $this->income = Income::getIncome($this->user->id, 'lastMonth');
-            $this->incomeByCategory = Income::getIncomeByCategory($this->user->id, 'lastMonth');
-
-            $this->expense = Expense::getExpense($this->user->id, 'lastMonth');
-            $this->expenseByCategory = Expense::getExpenseByCategory($this->user->id, 'lastMonth');
-            //$this->pieChart = static::PieChartData($this->expenseByCategory);
+            $this->income = Incomes::getIncome($this->user->id, 'lastMonth');
+            $this->incomeByCategory = Incomes::getIncomeByCategory($this->user->id, 'lastMonth');
+            $this->expense = Expenses::getExpense($this->user->id, 'lastMonth');
+            $this->expenseByCategory = Expenses::getExpenseByCategory($this->user->id, 'lastMonth');
+            $_SESSION['expenseByCategory'] = $this->expenseByCategory;
+            $_SESSION['incomeByCategory'] = $this->incomeByCategory;
 
         } else if ($_POST['date'] == 'custom') {
 
-            $this->income = Income::getIncome($this->user->id, 'custom', $_POST['dateStart'], $_POST['dateEnd']);
-            $this->incomeByCategory = Income::getIncomeByCategory($this->user->id, 'custom', $_POST['dateStart'], $_POST['dateEnd']);
-            
-            $this->expense = Expense::getExpense($this->user->id, 'custom', $_POST['dateStart'], $_POST['dateEnd']);
-            $this->expenseByCategory = Expense::getExpenseByCategory($this->user->id, 'custom', $_POST['dateStart'], $_POST['dateEnd']);
-            //$this->pieChart = static::PieChartData($this->expenseByCategory);
+            $this->income = Incomes::getIncome($this->user->id, 'custom', $_POST['dateStart'], $_POST['dateEnd']);
+            $this->incomeByCategory = Incomes::getIncomeByCategory($this->user->id, 'custom', $_POST['dateStart'], $_POST['dateEnd']);
+            $this->expense = Expenses::getExpense($this->user->id, 'custom', $_POST['dateStart'], $_POST['dateEnd']);
+            $this->expenseByCategory = Expenses::getExpenseByCategory($this->user->id, 'custom', $_POST['dateStart'], $_POST['dateEnd']);
+            $_SESSION['expenseByCategory'] = $this->expenseByCategory;
+            $_SESSION['incomeByCategory'] = $this->incomeByCategory;
         }
 
         View::renderTemplate('/Balance/show.html', [
@@ -125,5 +125,4 @@ class Balance extends Authenticated
 
         return $pieChartData;
     }*/
-
 }

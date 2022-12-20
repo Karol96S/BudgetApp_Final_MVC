@@ -344,23 +344,26 @@ class Expenses extends \Core\Model
 
     public static function getExpenseByCategoryPieChartData()
     {
-        if (($_SESSION['expenseByCategory'])) {
-            $expenseByCategory = $_SESSION['expenseByCategory'];
-            $dataPoints = [];
-            $expenseSum = 0;
+        if (isset($_SESSION['expenseByCategory'])) {
 
-            foreach ($expenseByCategory as $expense) {
+            if (($_SESSION['expenseByCategory'])) {
+                $expenseByCategory = $_SESSION['expenseByCategory'];
+                $dataPoints = [];
+                $expenseSum = 0;
 
-                $expenseSum += $expense['amount'];
+                foreach ($expenseByCategory as $expense) {
+
+                    $expenseSum += $expense['amount'];
+                }
+
+                foreach ($expenseByCategory as $data) {
+
+                    $expensePercentage = $data['amount'] / $expenseSum * 100;
+                    $newArray = array("label" => $data['name'], "y" => $expensePercentage);
+                    array_push($dataPoints, $newArray);
+                }
+                return $dataPoints;
             }
-
-            foreach ($expenseByCategory as $data) {
-
-                $expensePercentage = $data['amount'] / $expenseSum * 100;
-                $newArray = array("label" => $data['name'], "y" => $expensePercentage);
-                array_push($dataPoints, $newArray);
-            }
-            return $dataPoints;
         }
     }
 }

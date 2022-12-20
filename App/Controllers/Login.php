@@ -11,6 +11,11 @@ class Login extends \Core\Controller
 {
     public function newAction()
     {
+        if (Auth::getUser()) {
+
+            $this->redirect(Auth::getReturnToPage());
+        }
+
         View::renderTemplate('Login/new.html');
     }
 
@@ -24,9 +29,7 @@ class Login extends \Core\Controller
 
             Auth::login($user, $remember_me);
 
-            //Flash::addMessage('Login successful');
-
-            $this->redirect("/profile/show");
+            //$this->redirect("/profile/show");
             $this->redirect(Auth::getReturnToPage());
 
         } else {

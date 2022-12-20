@@ -126,7 +126,9 @@ class Expenses extends \Core\Model
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($expenses);
     }
 
     public function lastMonthExpenses($user_ID)
@@ -147,7 +149,9 @@ class Expenses extends \Core\Model
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($expenses);
     }
 
     public function customExpenses($user_ID, $userInputDateStart, $userInputDateEnd)
@@ -167,7 +171,9 @@ class Expenses extends \Core\Model
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($expenses);
     }
 
     public function currentMonthExpensesByCategory($user_ID)
@@ -176,16 +182,19 @@ class Expenses extends \Core\Model
         FROM expenses, expenses_category_assigned_to_users
         WHERE expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
         AND expenses.user_id = expenses_category_assigned_to_users.user_id
-        AND expenses.user_id = '$user_ID';
+        AND expenses.user_id = '$user_ID'
         AND MONTH(date_of_expense) = MONTH(CURRENT_DATE)
         AND YEAR(date_of_expense) = YEAR(CURRENT_DATE)
-        GROUP BY expenses_category_assigned_to_users.name";
+        GROUP BY expenses_category_assigned_to_users.name
+        ORDER BY amount DESC";
 
         $db = static::getDB();
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($expenses);
     }
 
     public function lastMonthExpensesByCategory($user_ID)
@@ -197,13 +206,16 @@ class Expenses extends \Core\Model
         AND expenses.user_id = '$user_ID'
         AND MONTH(date_of_expense) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
         AND YEAR(date_of_expense) = YEAR(CURRENT_DATE)
-        GROUP BY expenses_category_assigned_to_users.name";
-        
+        GROUP BY expenses_category_assigned_to_users.name
+        ORDER BY amount DESC";
+
         $db = static::getDB();
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($expenses);
     }
 
     public function customExpensesByCategory($user_ID, $userInputDateStart, $userInputDateEnd)
@@ -215,20 +227,26 @@ class Expenses extends \Core\Model
         AND expenses.user_id = expenses_category_assigned_to_users.user_id
         AND expenses.user_id = '$user_ID'
         AND date_of_expense BETWEEN '$userInputDateStart' AND '$userInputDateEnd'
-        GROUP BY expenses_category_assigned_to_users.name";
-        
+        GROUP BY expenses_category_assigned_to_users.name
+        ORDER BY amount DESC";
+
         $db = static::getDB();
         $stmt = $db->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($expenses);
     }
 
-    /*public static function changeFromEnglishToPolish()
+    public static function changeFromEnglishToPolish($expensesDetailedData)
     {
+
+        if (!$expensesDetailedData) return false;
+
         foreach ($expensesDetailedData as &$expensesDetailed) {
             foreach ($expensesDetailed as &$name['name']) {
-    
+
                 switch ($name['name']) {
                     case "Books":
                         $name['name'] = "Książki";
@@ -277,21 +295,72 @@ class Expenses extends \Core\Model
                         break;
                 }
             }
-    
-    
-            foreach ($expensesDetailed as &$name['payment_method']) {
-    
-                switch ($name['payment_method']) {
-                    case "Cash":
-                        $name['payment_method'] = "Gotówka";
-                        break;
-                    case "Debit Card":
-                        $name['payment_method'] = "Karta Debetowa";
-                        break;
-                    case "Credit Card":
-                        $name['payment_method'] = "Karta Kredytowa";
-                        break;
-                }
+        }
+
+
+        foreach ($expensesDetailedData as &$name['payment_method']) {
+
+            switch ($name['payment_method']) {
+                case "Cash":
+                    $name['payment_method'] = "Gotówka";
+                    break;
+                case "Debit Card":
+                    $name['payment_method'] = "Karta Debetowa";
+                    break;
+                case "Credit Card":
+                    $name['payment_method'] = "Karta Kredytowa";
+                    break;
             }
-    }*/
+        }
+
+        return $expensesDetailedData;
+    }
+
+    public static function getExpense($user_ID, $choice = "", $dateStart = "", $dateEnd = "")
+    {
+        $expense = new Expenses;
+
+        if (($choice == 'currentMonth') || ($choice == "")) {
+            return $expense->currentMonthExpenses($user_ID);
+        } else if ($choice == 'lastMonth') {
+            return $expense->lastMonthExpenses($user_ID);
+        } else if ($choice == 'custom') {
+            return $expense->customExpenses($user_ID, $dateStart, $dateEnd);
+        }
+    }
+
+    public static function getExpenseByCategory($user_ID, $choice = "", $dateStart = "", $dateEnd = "")
+    {
+        $expenseByCategory = new Expenses;
+
+        if (($choice == 'currentMonth') || ($choice == "")) {
+            return $expenseByCategory->currentMonthExpensesByCategory($user_ID);
+        } else if ($choice == 'lastMonth') {
+            return $expenseByCategory->lastMonthExpensesByCategory($user_ID);
+        } else if ($choice == 'custom') {
+            return $expenseByCategory->customExpensesByCategory($user_ID, $dateStart, $dateEnd);
+        }
+    }
+
+    public static function getExpenseByCategoryPieChartData()
+    {
+        if (($_SESSION['expenseByCategory'])) {
+            $expenseByCategory = $_SESSION['expenseByCategory'];
+            $dataPoints = [];
+            $expenseSum = 0;
+
+            foreach ($expenseByCategory as $expense) {
+
+                $expenseSum += $expense['amount'];
+            }
+
+            foreach ($expenseByCategory as $data) {
+
+                $expensePercentage = $data['amount'] / $expenseSum * 100;
+                $newArray = array("label" => $data['name'], "y" => $expensePercentage);
+                array_push($dataPoints, $newArray);
+            }
+            return $dataPoints;
+        }
+    }
 }

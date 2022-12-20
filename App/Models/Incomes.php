@@ -228,7 +228,7 @@ class Incomes extends \Core\Model
 
         foreach ($incomesDetailedData as &$incomesData) {
             foreach ($incomesData as &$name['name']) {
-    
+
                 switch ($name['name']) {
                     case "Salary":
                         $name['name'] = "Wynagrodzenie";
@@ -275,16 +275,11 @@ class Incomes extends \Core\Model
 
         if (($choice == 'currentMonth') || ($choice == "")) {
             return $income->currentMonthIncomes($user_ID);
-        }
-
-        else if ($choice == 'lastMonth') {
+        } else if ($choice == 'lastMonth') {
             return $income->lastMonthIncomes($user_ID);
-        }
-
-        else if ($choice == 'custom') {
+        } else if ($choice == 'custom') {
             return $income->customIncomes($user_ID, $dateStart, $dateEnd);
         }
-
     }
 
     public static function getIncomeByCategory($user_ID, $choice = "", $dateStart = "", $dateEnd = "")
@@ -293,36 +288,35 @@ class Incomes extends \Core\Model
 
         if (($choice == 'currentMonth') || ($choice == "")) {
             return $incomeByCategory->currentMonthIncomesByCategory($user_ID);
-        }
-
-        else if ($choice == 'lastMonth') {
+        } else if ($choice == 'lastMonth') {
             return $incomeByCategory->lastMonthIncomesByCategory($user_ID);
-        }
-
-        else if ($choice == 'custom') {
+        } else if ($choice == 'custom') {
             return $incomeByCategory->customIncomesByCategory($user_ID, $dateStart, $dateEnd);
         }
     }
 
     public static function getIncomeByCategoryPieChartData()
     {
-        if (($_SESSION['incomeByCategory'])) {
-            $incomeByCategory = $_SESSION['incomeByCategory'];
-            $dataPoints = [];
-            $incomeSum = 0;
+        if (isset($_SESSION['incomeByCategory'])) {
 
-            foreach ($incomeByCategory as $income) {
+            if (($_SESSION['incomeByCategory'])) {
+                $incomeByCategory = $_SESSION['incomeByCategory'];
+                $dataPoints = [];
+                $incomeSum = 0;
 
-                $incomeSum += $income['amount'];
+                foreach ($incomeByCategory as $income) {
+
+                    $incomeSum += $income['amount'];
+                }
+
+                foreach ($incomeByCategory as $data) {
+
+                    $incomePercentage = $data['amount'] / $incomeSum * 100;
+                    $newArray = array("label" => $data['name'], "y" => $incomePercentage);
+                    array_push($dataPoints, $newArray);
+                }
+                return $dataPoints;
             }
-
-            foreach ($incomeByCategory as $data) {
-
-                $incomePercentage = $data['amount'] / $incomeSum * 100;
-                $newArray = array("label" => $data['name'], "y" => $incomePercentage);
-                array_push($dataPoints, $newArray);
-            }
-            return $dataPoints;
         }
     }
 }

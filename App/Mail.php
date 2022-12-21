@@ -2,30 +2,45 @@
 
 namespace App;
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+
 class Mail
 {
-    /**
-     * Send a message
-     */
     public static function send($to, $subject, $text, $html)
     {
-        // the message
-        //$msg = "First line of text\nSecond line of text";
 
-        //basic mail doesn't support both text and html so for the sake of this project
-        //we will operate with just html.
-        $body = $html;
+        $mail = new PHPMailer(true);
 
-        // use wordwrap() if lines are longer than 70 characters
-        //$text = wordwrap($text, 70);
+        //Server settings
+        //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = 'karol.szypkowski96@gmail.com';                     //SMTP username
+        $mail->Password   = 'vshapixakaspueaq';                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+        $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
-        // Always set content-type when sending HTML email
-        $headers = "MIME-Version: 1.0" . "\r\n";
-        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-        $headers .= 'From: karol <karol.szypkowski96@gmail.com>' . "\r\n";
+        //Recipients
+        $mail->setFrom('karol.szypkowski96@gmail.com', 'Budget Manager');
+        $mail->addAddress($to);     //Add a recipient
+        $mail->addReplyTo('karol.szypkowski96@gmail.com', 'Budget Manager');
+        //$mail->addCC('cc@example.com');
+        //$mail->addBCC('bcc@example.com');
 
-        // send email
-        mail($to, $subject, $body, $headers);
+        //Attachments
+        //$mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
+        //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
 
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = $subject;
+        $mail->Body    = $html;
+        $mail->AltBody = $text;
+
+        $mail->send();
     }
 }

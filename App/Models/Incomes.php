@@ -124,7 +124,7 @@ class Incomes extends \Core\Model
             AND incomes.user_id = incomes_category_assigned_to_users.user_id
             AND incomes.user_id = '$user_ID'
             AND MONTH(date_of_income) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
-            AND YEAR(date_of_income) = YEAR(CURRENT_DATE)
+            AND YEAR(date_of_income) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
             ORDER BY DATE(date_of_income) DESC";
 
         $db = static::getDB();
@@ -187,7 +187,7 @@ class Incomes extends \Core\Model
         AND incomes.user_id = incomes_category_assigned_to_users.user_id
         AND incomes.user_id = '$user_ID'
         AND MONTH(date_of_income) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
-        AND YEAR(date_of_income) = YEAR(CURRENT_DATE)
+        AND YEAR(date_of_income) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
         GROUP BY incomes_category_assigned_to_users.name
         ORDER BY amount DESC";
 

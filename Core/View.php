@@ -43,11 +43,11 @@ class View
             $twig->addGlobal('max_date_dot', date('t.m.Y'));
             $twig->addGlobal(
                 'last_month_start',
-                date('d.m.Y', (mktime(0, 0, 0, date("m") - 1, 01, date("Y"))))
+                date('d.m.Y', (mktime(0, 0, 0, date_create("-1 month")->format('m'), 01, date("Y"))))
             );
             $twig->addGlobal(
                 'last_month_end',
-                date('d.m.Y', (mktime(0, 0, 0, date("m") - 1, cal_days_in_month(CAL_GREGORIAN, date("m") - 1, date("Y")), date("Y"))))
+                date('d.m.Y', (mktime(0, 0, 0, date("m") - 1, cal_days_in_month(CAL_GREGORIAN, date_create("-1 month")->format('m'), date("Y")), date("Y"))))
             );
             $twig->addGlobal('custom_date_start', \App\Controllers\Balance::getCustomDateStart());
             $twig->addGlobal('custom_date_end', \App\Controllers\Balance::getCustomDateEnd());

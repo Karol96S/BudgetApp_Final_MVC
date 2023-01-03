@@ -219,6 +219,10 @@ button {
     align-items: center;
 }
 
+textarea {
+    resize: none;
+}
+
 .addExpense {
     width:100%;
     height: auto;

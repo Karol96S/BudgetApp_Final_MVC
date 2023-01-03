@@ -142,7 +142,7 @@ class Expenses extends \Core\Model
             AND expenses.user_id = payment_methods_assigned_to_users.user_id
             AND expenses.user_id = '$user_ID'
             AND MONTH(date_of_expense) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
-            AND YEAR(date_of_expense) = YEAR(CURRENT_DATE)
+            AND YEAR(date_of_expense) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
             ORDER BY DATE(date_of_expense) DESC";
 
         $db = static::getDB();
@@ -205,7 +205,7 @@ class Expenses extends \Core\Model
         AND expenses.user_id = expenses_category_assigned_to_users.user_id
         AND expenses.user_id = '$user_ID'
         AND MONTH(date_of_expense) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
-        AND YEAR(date_of_expense) = YEAR(CURRENT_DATE)
+        AND YEAR(date_of_expense) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
         GROUP BY expenses_category_assigned_to_users.name
         ORDER BY amount DESC";
 

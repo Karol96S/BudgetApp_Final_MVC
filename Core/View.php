@@ -53,6 +53,9 @@ class View
             $twig->addGlobal('custom_date_end', \App\Controllers\Balance::getCustomDateEnd());
             $twig->addGlobal('pieChartExpenses', \App\Models\Expenses::getExpenseByCategoryPieChartData());
             $twig->addGlobal('pieChartIncomes', \App\Models\Incomes::getIncomeByCategoryPieChartData());
+            $twig->addGlobal('incomeCategoriesAssignedToUser', \App\Models\Incomes::getIncomeCategoriesAssignedToUser());
+            $twig->addGlobal('expenseCategoriesAssignedToUser', \App\Models\Expenses::getExpenseCategoriesAssignedToUser());
+            $twig->addGlobal('paymentMethodsAssignedToUser', \App\Models\Expenses::getPaymentMethodsAssignedToUser());
         }
 
         return $twig->render($template, $args);

@@ -1,0 +1,358 @@
+{% extends "userIsLoggedIn.html" %}
+
+{% block style %}
+<link rel="stylesheet" href="/css/Settings.css">{% endblock %}
+{% block title %} User's Page {% endblock %}
+
+{% block body %}
+<section id="workingSpace" class="container-fluid p-0">
+    <div class="row justify-content-center">
+        <div id="outterLayer" class="row justify-content-center col col-xxl-8 text-center pt-4 mt-5 mx-0">
+            <div id="subHeader" class="row justify-content-center">
+                <div class="col col-1"></div>
+                <div id="settingsHeader" class="col col-10 text-start">
+                    <h4>Ustawienia</h4>
+                    <hr>
+                </div>
+                <div class="col col-1"></div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col col-md-1"></div>
+                <div class="accordion col col-12 col-md-10 mb-4 mb-md-1" id="accordionIncomes">
+                    <div class="accordion" id="accordionPanelsStayOpenIncome">
+                        <div class="accordion-item p-0 m-0">
+                            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
+                                    aria-controls="panelsStayOpen-collapseOne">
+                                    <span><img id="incomesSettingsIcon" class="toolbarIcons align-self-center"
+                                            src="/images/black-24dp/1x/outline_local_atm_black_24dp.png"
+                                            alt="money card icon">
+                                    </span>
+                                    Kategorie przychodów
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse"
+                                aria-labelledby="panelsStayOpen-headingOne">
+                                <div class="accordion-body">
+                                    <div class="row text-start">
+                                        <p class="categoryDescription">Kategorie przychodów obecnie przypisane do konta:
+                                        </p>
+                                    </div>
+                                    {% for data in incomeCategoriesAssignedToUser %}
+                                    <div class="category row align-items-center my-2">
+                                        <div class="col col-8 col-lg-10 text-start">
+                                            <p>{{ data.name }}</p>
+                                        </div>
+                                        <div class="col col-4 col-lg-2">
+                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditIncomeCategory">
+                                                <span><img class="align-self-center"
+                                                        src="/images/white-24dp/1x/outline_drive_file_rename_outline_white_24dp.png"
+                                                        alt="edit position icon">
+                                                </span>
+                                            </button>
+                                            <div class="modal fade" id="modalEditIncomeCategory" tabindex="-1" aria-labelledby="modalEditIncomeCategoryLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                  <div class="modal-content">
+                                                    <div class="modal-header">
+                                                      <h3 class="modal-title fs-5" id="modalEditIncomeCategoryLabel">Edytuj kategorię</h3>
+                                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body text-start">
+                                                        <form>
+                                                          <div class="mb-5">
+                                                            <label for="recipient-name" class="col-form-label">Nazwa kategorii:</label>
+                                                            <input type="text" class="form-control" id="recipient-name">
+                                                          </div>
+                                                          <div class="mb-3">
+                                                            <input class="form-check-input" type="checkbox" value="" id="incomeLimitCheckbox">
+                                                            <label class="form-check-label mb-2" for="incomeLimitCheckbox">Ustaw limit:</label>
+                                                            <input type="number" step="0.01" min="0" class="form-control" id="message-text">
+                                                          </div>
+                                                        </form>
+                                                      </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-primary">Zapisz</button>
+                                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Wróć</button>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#modalDeleteIncomeCategory">
+                                                <span><img class="align-self-center"
+                                                        src="/images/white-24dp/1x/baseline_delete_outline_white_24dp.png"
+                                                        alt="delete icon">
+                                                </span>
+                                            </button>
+                                            <div class="modal fade" id="modalDeleteIncomeCategory" tabindex="-1"
+                                                aria-labelledby="modalDeleteIncomeCategoryLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p class="text-danger">Czy na pewno chcesz usunąć tę kategorię?</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary">Usuń</button>
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Wróć</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="row align-items-center my-2">
+                                        <div class="col col-4 p-0 mt-4 text-start">
+                                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAddIncomeCategory">
+                                                Dodaj nową kategorię
+                                            </button>
+                                            <div class="modal fade" id="modalAddIncomeCategory" tabindex="-1" aria-labelledby="modalAddIncomeCategoryLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                  <div class="modal-content">
+                                                    <div class="modal-header">
+                                                      <h3 class="modal-title fs-5" id="modalAddIncomeCategoryLabel">Dodaj nową kategorię</h3>
+                                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body text-start">
+                                                        <form>
+                                                          <div class="mb-5">
+                                                            <label for="recipient-name" class="col-form-label">Nazwa kategorii:</label>
+                                                            <input type="text" class="form-control" id="recipient-name">
+                                                          </div>
+                                                          <div class="mb-3">
+                                                            <input class="form-check-input" type="checkbox" value="" id="incomeLimitCheckbox">
+                                                            <label class="form-check-label mb-2" for="incomeLimitCheckbox">Ustaw limit:</label>
+                                                            <input type="number" step="0.01" min="0" class="form-control" id="message-text">
+                                                          </div>
+                                                        </form>
+                                                      </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-primary">Zapisz</button>
+                                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Wróć</button>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                        </div>
+                                        <div class="col col-8"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-md-1"></div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col col-md-1"></div>
+                <div class="accordion col col-12 col-md-10 mb-4 mb-md-1" id="accordionExpenses">
+                    <div class="accordion" id="accordionPanelsStayOpenExpense">
+                        <div class="accordion-item p-0 m-0">
+                            <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                                    aria-controls="panelsStayOpen-collapseTwo">
+                                    <span><img id="expensesSettingsIcon" class="toolbarIcons align-self-center"
+                                            src="/images/black-24dp/1x/outline_toll_black_24dp.png"
+                                            alt="money card icon">
+                                    </span>
+                                    Kategorie wydatków
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse"
+                                aria-labelledby="panelsStayOpen-headingTwo">
+                                <div class="accordion-body">
+                                    <div class="row text-start">
+                                        <p class="categoryDescription">Kategorie wydatków obecnie przypisane do konta:
+                                        </p>
+                                    </div>
+                                    {% for data in expenseCategoriesAssignedToUser %}
+                                    <div class="category row align-items-center my-2">
+                                        <div class="col col-10 text-start">
+                                            <p>{{ data.name }}</p>
+                                        </div>
+                                        <div class="col col-2">
+                                            <button type="button" class="btn btn-primary btn-sm">
+                                                <span><img class="align-self-center"
+                                                        src="/images/white-24dp/1x/outline_drive_file_rename_outline_white_24dp.png"
+                                                        alt="edit position icon">
+                                                </span>
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm">
+                                                <span><img class="align-self-center"
+                                                        src="/images/white-24dp/1x/baseline_delete_outline_white_24dp.png"
+                                                        alt="delete icon">
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="row align-items-center my-2">
+                                        <div class="col col-4 p-0 mt-4 text-start">
+                                            <button type="button" class="btn btn-success">
+                                                Dodaj nową kategorię
+                                            </button>
+                                        </div>
+                                        <div class="col col-8"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-md-1"></div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col col-md-1"></div>
+                <div class="accordion col col-12 col-md-10 mb-4 mb-md-1" id="accordionExpenses">
+                    <div class="accordion" id="accordionPanelsStayOpenExpense">
+                        <div class="accordion-item p-0 m-0">
+                            <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
+                                    aria-controls="panelsStayOpen-collapseThree">
+                                    <span><img id="expensesSettingsIcon" class="toolbarIcons align-self-center"
+                                            src="/images/black-24dp/1x/outline_currency_exchange_black_24dp.png"
+                                            alt="money card icon">
+                                    </span>
+                                    Sposoby płatności
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse"
+                                aria-labelledby="panelsStayOpen-headingThree">
+                                <div class="accordion-body">
+                                    <div class="row text-start">
+                                        <p class="categoryDescription">Sposoby płatności obecnie przypisane do konta:
+                                        </p>
+                                    </div>
+                                    {% for data in paymentMethodsAssignedToUser %}
+                                    <div class="category row align-items-center my-2">
+                                        <div class="col col-10 text-start">
+                                            <p>{{ data.payment_method }}</p>
+                                        </div>
+                                        <div class="col col-2">
+                                            <button type="button" class="btn btn-primary btn-sm">
+                                                <span><img class="align-self-center"
+                                                        src="/images/white-24dp/1x/outline_drive_file_rename_outline_white_24dp.png"
+                                                        alt="edit position icon">
+                                                </span>
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm">
+                                                <span><img class="align-self-center"
+                                                        src="/images/white-24dp/1x/baseline_delete_outline_white_24dp.png"
+                                                        alt="delete icon">
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="row align-items-center my-2">
+                                        <div class="col col-4 p-0 mt-4 text-start">
+                                            <button type="button" class="btn btn-success">
+                                                Dodaj nową kategorię
+                                            </button>
+                                        </div>
+                                        <div class="col col-8"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-md-1"></div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col col-md-1"></div>
+                <div class="accordion col col-12 col-md-10 mb-4 mb-md-5" id="profilePanel">
+                    <div class="accordion" id="accordionPanelsStayOpenProfilePanel">
+                        <div class="accordion-item p-0 m-0">
+                            <h2 class="accordion-header" id="panelsStayOpen-headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false"
+                                    aria-controls="panelsStayOpen-collapseFour">
+                                    <span><img id="expensesSettingsIcon" class="toolbarIcons align-self-center"
+                                            src="/images/black-24dp (2)/1x/baseline_person_black_24dp.png"
+                                            alt="money card icon">
+                                    </span>
+                                    Profil użytkownika
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse"
+                                aria-labelledby="panelsStayOpen-headingFour">
+                                <div class="accordion-body">
+                                    <div class="row text-start">
+                                        <p class="categoryDescription">Dane konta:
+                                        </p>
+                                    </div>
+                                    <div class="category row align-items-center my-2">
+                                        <div class="col col-10 text-start">
+                                            <div class="row">
+                                                <div class="col col-12 col-md-4">
+                                                    <p>Nazwa użytkownika: </p>
+                                                </div>
+                                                <div class="userInfo col col-12 col-md-8">{{ current_user.username }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col col-2">
+                                            <button type="button" class="btn btn-primary btn-sm">
+                                                <span><img class="align-self-center"
+                                                        src="/images/white-24dp/1x/outline_drive_file_rename_outline_white_24dp.png"
+                                                        alt="edit position icon">
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="category row align-items-center my-2">
+                                        <div class="col col-10 text-start">
+                                            <div class="row">
+                                                <div class="col col-12 col-md-4">
+                                                    <p>e-mail: </p>
+                                                </div>
+                                                <div class="userInfo col col-12 col-md-8">{{ current_user.email }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col col-2">
+                                            <button type="button" class="btn btn-primary btn-sm">
+                                                <span><img class="align-self-center"
+                                                        src="/images/white-24dp/1x/outline_drive_file_rename_outline_white_24dp.png"
+                                                        alt="edit position icon">
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="category row align-items-center my-2">
+                                        <div class="col col-8 text-start">
+                                            <p>Hasło</p>
+                                        </div>
+                                        <div class="changePasswordText col col-2 text-end"><label
+                                                for="changePassword">Zmień hasło</label></div>
+                                        <div class="col col-2">
+                                            <button type="button" id="changePassword" class="btn btn-primary btn-sm">
+                                                <span><img class="align-self-center"
+                                                        src="/images/white-24dp/1x/outline_drive_file_rename_outline_white_24dp.png"
+                                                        alt="edit position icon">
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-md-1"></div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col col-12 my-4 my-lg-1"></div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

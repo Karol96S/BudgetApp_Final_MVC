@@ -4,6 +4,7 @@ namespace App\Models;
 
 use PDO;
 use \Core\View;
+use \App\Auth;
 
 
 class Incomes extends \Core\Model
@@ -317,6 +318,29 @@ class Incomes extends \Core\Model
                 }
                 return $dataPoints;
             }
+        }
+    }
+
+    public static function getIncomeCategoriesAssignedToUser()
+    {
+        $user = Auth::getUser();
+
+        if($user) {
+
+        $user_ID = $user->id;
+
+        $sql = "SELECT name
+        FROM incomes_category_assigned_to_users
+        WHERE incomes_category_assigned_to_users.user_id = '$user_ID'";
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        $incomes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return static::changeFromEnglishToPolish($incomes);
+        
         }
     }
 }

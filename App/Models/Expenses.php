@@ -4,6 +4,7 @@ namespace App\Models;
 
 use PDO;
 use \Core\View;
+use \App\Auth;
 
 
 class Expenses extends \Core\Model
@@ -364,6 +365,68 @@ class Expenses extends \Core\Model
                 }
                 return $dataPoints;
             }
+        }
+    }
+
+    public static function getExpenseCategoriesAssignedToUser()
+    {
+        $user = Auth::getUser();
+
+        if ($user) {
+
+            $user_ID = $user->id;
+
+            $sql = "SELECT name
+        FROM expenses_category_assigned_to_users
+        WHERE expenses_category_assigned_to_users.user_id = '$user_ID'";
+
+            $db = static::getDB();
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+
+            $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return static::changeFromEnglishToPolish($expenses);
+        }
+    }
+
+    public static function getPaymentMethodsAssignedToUser()
+    {
+        $user = Auth::getUser();
+
+        if ($user) {
+
+            $user_ID = $user->id;
+
+            $sql = "SELECT name AS payment_method
+        FROM payment_methods_assigned_to_users
+        WHERE payment_methods_assigned_to_users.user_id = '$user_ID'";
+
+            $db = static::getDB();
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+
+            $paymentMethods = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($paymentMethods as &$paymentsDetailed) {
+                foreach ($paymentsDetailed as &$name['payment_method']) {
+
+                    switch ($name['payment_method']) {
+                        case "Cash":
+                            $name['payment_method'] = "Gotówka";
+                            break;
+                        case "Debit Card":
+                            $name['payment_method'] = "Karta Debetowa";
+                            break;
+                        case "Credit Card":
+                            $name['payment_method'] = "Karta Kredytowa";
+                            break;
+                    }
+                }
+            }
+
+            return $paymentMethods;
+            
         }
     }
 }

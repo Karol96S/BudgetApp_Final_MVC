@@ -57,4 +57,18 @@ class Expense extends Authenticated
         View::renderTemplate('Expense/success.html');
     }
     
+    public function expensesAction()
+    {
+        $id = $this->route_params['id'];
+        $date = $this->route_params['date'];
+
+        echo json_encode(Expenses::getExpenseSumAssignedToUser($id, $date), JSON_UNESCAPED_UNICODE);
+    }
+
+    public function limitAction()
+    {
+        $id = $this->route_params['id'];
+
+        echo json_encode(Expenses::getExpenseLimitAssignedToUser($id), JSON_UNESCAPED_UNICODE);
+    }
 }

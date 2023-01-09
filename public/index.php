@@ -37,6 +37,8 @@ $router->add('logout', ['controller' => 'Login', 'action' => 'destroy']);
 $router->add('password/reset/{token:[\da-f]+}', ['controller' => 'Password', 'action' => 'reset']);
 $router->add('register/activate/{token:[\da-f]+}', ['controller' => 'Register', 'action' => 'activate']);
 $router->add('settings', ['controller' => 'Settings', 'action' => 'show']);
+$router->add('api/expenses/{id:[\d]+}/{date:[\d][\d][\d][\d]-[\d][\d]-[\d][\d]}', ['controller' => 'Expense', 'action' => 'expenses']);
+$router->add('api/limit/{id:[\d]+}', ['controller' => 'Expense', 'action' => 'limit']);
 $router->add('{controller}/{action}');
     
 $router->dispatch($_SERVER['QUERY_STRING']);

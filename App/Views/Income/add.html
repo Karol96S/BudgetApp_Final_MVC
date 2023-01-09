@@ -77,13 +77,10 @@
                     <div class="col col-xs-9 d-block d-sm-none"></div>
                     <div class="col col-md-7 col-sm-8 col-12 text-start">
                         <select class="form-select" name="categoryOfIncome" aria-label="Default select example">
-                            <option selected id="wynagrodzenie" value="Salary">Wynagrodzenie
-                            </option>
-                            <option id="odsetkiBankowe" value="Interest">Odsetki Bankowe
-                            </option>
-                            <option id="allegro" value="Allegro">Sprzedaż na Allegro
-                            </option>
-                            <option id="inne" value="Another">Inne</option>
+                            {% for data in incomeCategoriesAssignedToUser %}
+                                <option {% if loop.index == 1 %}selected{% endif %} value="{{ data.id }}">{{ data.name }}
+                                </option>
+                                {% endfor %}
                         </select>
                     </div>
                     <div class="col col-md-1 d-none d-sm-block"></div>

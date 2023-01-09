@@ -165,10 +165,22 @@
     {% if (incomeByCategory is not empty) and (expenseByCategory is not empty) %}
     <div id="chartContainer" class="row justify-content-center text-center">
         <div class="col col-xxl-4 col-xlg-5 col-md-5 col-11">
-            <div id="pieChartExpenses" style="margin-bottom: 420px;"></div>
+            <div id="pieChartIncomes" style="margin-bottom: 420px;"></div>
         </div>
         <div class="col col-xxl-4 col-xlg-5 col-md-5 col-11">
+            <div id="pieChartExpenses" style="margin-bottom: 420px;"></div>
+        </div>
+    </div>
+    {% elseif incomeByCategory is not empty %}
+    <div id="chartContainer" class="row justify-content-center text-center">
+        <div class="col col-xxl-5 col-xlg-6 col-md-10 col-11">
             <div id="pieChartIncomes" style="margin-bottom: 420px;"></div>
+        </div>
+    </div>
+    {% elseif expenseByCategory is not empty %}
+    <div id="chartContainer" class="row justify-content-center text-center">
+        <div class="col col-xxl-5 col-xlg-6 col-md-10 col-11">
+            <div id="pieChartExpenses" style="margin-bottom: 420px;"></div>
         </div>
     </div>
     {% endif %}
@@ -276,7 +288,9 @@
 <script>
     window.onload = function() {
 
-        var chart = new CanvasJS.Chart("pieChartExpenses", {
+        if ({{ pieChartIncomes | json_encode | raw}}) {
+
+        var chart = new CanvasJS.Chart("pieChartIncomes", {
             animationEnabled: true,
             title: {
                 text: "Przychody:"
@@ -293,7 +307,9 @@
         });
         chart.render();
 
-        var chart = new CanvasJS.Chart("pieChartIncomes", {
+        }
+
+        var chart = new CanvasJS.Chart("pieChartExpenses", {
             animationEnabled: true,
             title: {
                 text: "Wydatki:"

@@ -36,12 +36,15 @@ class Expenses extends \Core\Model
             $inputCategoryOfExpense = $_POST['categoryOfExpense'];
             $inputComment = $_POST['comment'];
 
-
-            $sql = "SELECT expenses_category_assigned_to_users.id FROM expenses_category_assigned_to_users, users
-            WHERE expenses_category_assigned_to_users.user_id = users.id AND user_id = '$userID' AND name='$inputCategoryOfExpense'";
-
+            /*
+            $sql = "SELECT expenses_category_assigned_to_users.id
+            FROM expenses_category_assigned_to_users, users
+            WHERE expenses_category_assigned_to_users.user_id = users.id
+            AND user_id = '$userID'
+            AND name='$inputCategoryOfExpense'";
+*/
             $db = static::getDB();
-            $stmt = $db->prepare($sql);
+            /*           $stmt = $db->prepare($sql);
             $stmt->execute();
 
             $inputExpenseId = $stmt->fetchColumn();
@@ -52,13 +55,13 @@ class Expenses extends \Core\Model
             $stmt->execute();
 
             $inputPaymentId = $stmt->fetchColumn();
-
+*/
             $sql = "INSERT INTO expenses VALUES
             (NULL, :userId, :expenseCategory, :paymentMethod, :amount, :dateOfExpense, :comment)";
             $stmt = $db->prepare($sql);
             $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
-            $stmt->bindValue(':expenseCategory', $inputExpenseId, PDO::PARAM_INT);
-            $stmt->bindValue(':paymentMethod', $inputPaymentId);
+            $stmt->bindValue(':expenseCategory', $inputCategoryOfExpense, PDO::PARAM_INT);
+            $stmt->bindValue(':paymentMethod', $inputPaymentMethod);
             $stmt->bindValue(':amount', $inputAmount, PDO::PARAM_STR);
             $stmt->bindValue(':dateOfExpense', $inputDate, PDO::PARAM_STR);
             $stmt->bindValue(':comment', $inputComment, PDO::PARAM_STR);
@@ -299,18 +302,20 @@ class Expenses extends \Core\Model
         }
 
 
-        foreach ($expensesDetailedData as &$name['payment_method']) {
+        foreach ($expensesDetailedData as &$expensesDetailed) {
+            foreach ($expensesDetailed as &$name['payment_method']) {
 
-            switch ($name['payment_method']) {
-                case "Cash":
-                    $name['payment_method'] = "Gotówka";
-                    break;
-                case "Debit Card":
-                    $name['payment_method'] = "Karta Debetowa";
-                    break;
-                case "Credit Card":
-                    $name['payment_method'] = "Karta Kredytowa";
-                    break;
+                switch ($name['payment_method']) {
+                    case "Cash":
+                        $name['payment_method'] = "Gotówka";
+                        break;
+                    case "Debit Card":
+                        $name['payment_method'] = "Karta Debetowa";
+                        break;
+                    case "Credit Card":
+                        $name['payment_method'] = "Karta Kredytowa";
+                        break;
+                }
             }
         }
 
@@ -376,7 +381,7 @@ class Expenses extends \Core\Model
 
             $user_ID = $user->id;
 
-            $sql = "SELECT name
+            $sql = "SELECT name, id
         FROM expenses_category_assigned_to_users
         WHERE expenses_category_assigned_to_users.user_id = '$user_ID'";
 
@@ -398,7 +403,7 @@ class Expenses extends \Core\Model
 
             $user_ID = $user->id;
 
-            $sql = "SELECT name AS payment_method
+            $sql = "SELECT id, name AS payment_method
         FROM payment_methods_assigned_to_users
         WHERE payment_methods_assigned_to_users.user_id = '$user_ID'";
 
@@ -426,7 +431,41 @@ class Expenses extends \Core\Model
             }
 
             return $paymentMethods;
-            
         }
+    }
+
+    public static function getExpenseSumAssignedToUser($id, $date)
+    {
+
+        $sql = "SELECT SUM(expenses.amount) as category_expenses
+        FROM expenses, expenses_category_assigned_to_users
+        WHERE expenses.expense_category_assigned_to_user_id = '$id'
+        AND expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
+        AND MONTH(date_of_expense) = MONTH('$date')
+        AND YEAR(date_of_expense) = YEAR('$date')";
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        $expensesSumByCategory = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $expensesSumByCategory[0];
+    }
+
+    public static function getExpenseLimitAssignedToUser($id)
+    {
+
+        $sql = "SELECT expenses_category_assigned_to_users.expense_limit as category_limit
+        FROM expenses_category_assigned_to_users
+        WHERE id = '$id'";
+
+        $db = static::getDB();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        $expensesLimitByCategory = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $expensesLimitByCategory[0];
     }
 }

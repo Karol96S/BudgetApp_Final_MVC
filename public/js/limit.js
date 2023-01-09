@@ -14,6 +14,7 @@ const getSumOfExpensesForSelectedMonth = async () => {
     try{
         const result = await fetch(`/api/expenses/${id}/${date}`);
         const data = await result.json();
+
         return await data['category_expenses'];
     } catch (e) {
         console.log('error', e);
@@ -97,4 +98,5 @@ const renderDOM = () => {
     else {
         document.getElementById('basicSummary').style.display = 'none';
     }
+
 } 

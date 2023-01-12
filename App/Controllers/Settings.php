@@ -26,4 +26,5 @@ class Settings extends Authenticated
             'user' => $this->user
         ]);
     }
+
 }

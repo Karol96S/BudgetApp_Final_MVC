@@ -71,4 +71,38 @@ class Expense extends Authenticated
 
         echo json_encode(Expenses::getExpenseLimitAssignedToUser($id), JSON_UNESCAPED_UNICODE);
     }
+
+    public function editExpenseCategoryAction()
+    {
+        $expense = new Expenses($_POST);
+
+        $expense->edit();
+
+        View::renderTemplate('Settings/show.html', [
+            'expense' => $expense
+        ]);
+    }
+
+    public function addExpenseCategoryAction()
+    {
+        $expense = new Expenses($_POST);
+
+        $expense->addCategory();
+
+        View::renderTemplate('Settings/show.html', [
+            'expense' => $expense
+        ]);
+
+    }
+
+    public function deleteExpenseCategoryAction()
+    {
+        $expense = new Expenses($_POST);
+
+        $expense->deleteCategory();
+
+        View::renderTemplate('Settings/show.html', [
+            'expense' => $expense
+        ]);
+    }
 }

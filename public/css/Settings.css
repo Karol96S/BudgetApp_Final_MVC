@@ -4,7 +4,6 @@ html,body
     height: 100%;
     margin: 0px;
     padding: 0px;
-    overflow-x: hidden; 
 }
 
 body {
@@ -14,6 +13,7 @@ body {
     background-attachment: fixed;
     background-position: center;
     margin: 0;
+    padding-right: 0px !important;
 }
 
 img#coinstack {
@@ -161,6 +161,10 @@ a.nav-link.active {
     border-radius: 10px;
 }
 
+#mainContainerSettings {
+    width: 100%;
+}
+
 li:hover {
     background-color: #0d3453;
     transform: translateY(0.05rem);
@@ -173,6 +177,10 @@ li:hover {
     outline: none;
     box-shadow: none;
     background-color: #344a68;
+}
+
+.modal {
+    padding-right: 0px !important;
 }
 
 .accordion-item {
@@ -191,6 +199,12 @@ li:hover {
     background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>") !important;
   }
 
+.limitStyle p {
+    color:#666666 !important;
+    font-family: 'Roboto', serif;
+    font-size: 0.85rem;
+}
+
 #incomesSettingsIcon {
     padding: 0 !important;
     margin: 0 5px 0 0 !important;
@@ -200,6 +214,11 @@ li:hover {
     padding: 0 !important;
     margin: 0 5px 0 0 !important;
 }
+
+#modalAddIncomeCategory {
+    font-family: "Roboto", serif !important;
+    font-weight: bold !important;
+  }
 
 .category {
     background-color: #e2e4e6 !important;
@@ -224,6 +243,3 @@ li:hover {
 .changePasswordText label:hover {
     cursor: pointer;
   }
-
-
-

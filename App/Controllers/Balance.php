@@ -92,7 +92,7 @@ class Balance extends Authenticated
 
     public static function getCustomDateStart()
     {
-        if (isset($_POST['date'])) {
+        if (isset($_POST['date']) && isset($_POST['dateStart'])) {
             $userInputDateStart = $_POST['dateStart'];
             return date('d.m.Y', strtotime($userInputDateStart));
         }
@@ -100,7 +100,7 @@ class Balance extends Authenticated
 
     public static function getCustomDateEnd()
     {
-        if (isset($_POST['date'])) {
+        if (isset($_POST['date']) && isset($_POST['dateStart'])) {
             $userInputDateEnd = $_POST['dateEnd'];
             return date('d.m.Y', strtotime($userInputDateEnd));
         }

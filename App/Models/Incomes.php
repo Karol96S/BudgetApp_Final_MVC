@@ -15,6 +15,7 @@ class Incomes extends \Core\Model
      * @var array
      */
     public $errors = [];
+    public $info = [];
 
     public function __construct($data = [])
     {
@@ -35,24 +36,119 @@ class Incomes extends \Core\Model
             $inputDate = $_POST['date'];
             $inputComment = $_POST['comment'];
 
-
+            /*
             $sql = "SELECT incomes_category_assigned_to_users.id FROM incomes_category_assigned_to_users, users
             WHERE incomes_category_assigned_to_users.user_id = users.id AND user_id = '$userID' AND name='$inputCategoryOfIncome'";
-
+*/
             $db = static::getDB();
+            /*
             $stmt = $db->prepare($sql);
             $stmt->execute();
 
             $inputIncomeId = $stmt->fetchColumn();
-
+*/
             $sql = "INSERT INTO incomes VALUES
             (NULL, :userId, :incomeCategory, :amount, :dateOfIncome, :comment)";
             $stmt = $db->prepare($sql);
             $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
-            $stmt->bindValue(':incomeCategory', $inputIncomeId, PDO::PARAM_INT);
+            $stmt->bindValue(':incomeCategory', $inputCategoryOfIncome, PDO::PARAM_INT);
             $stmt->bindValue(':amount', $inputAmount, PDO::PARAM_STR);
             $stmt->bindValue(':dateOfIncome', $inputDate, PDO::PARAM_STR);
             $stmt->bindValue(':comment', $inputComment, PDO::PARAM_STR);
+
+            return $stmt->execute();
+        }
+
+        return false;
+    }
+
+    public function addCategory()
+    {
+
+        $this->validateAddCategory();
+
+        if (empty($this->info['addName'])) {
+
+            $userID = $_SESSION['user_id'];
+            $inputCategoryOfIncome = $_POST['addIncomeCategory'];
+
+            $db = static::getDB();
+
+            $sql = "INSERT INTO incomes_category_assigned_to_users
+            VALUES (NULL, :userId, :incomeCategoryName)";
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindValue(':incomeCategoryName', $inputCategoryOfIncome, PDO::PARAM_STR);
+
+            return $stmt->execute();
+        }
+
+        return false;
+    }
+
+    public function deleteCategory()
+    {
+
+        if (isset($_POST['deleteCategoryId'])) {
+            $deleteFlag = true;
+            $userID = $_SESSION['user_id'];
+            $inputCategoryOfIncomeID = $_POST['deleteCategoryId'];
+
+            $db = static::getDB();
+
+            /**Delete records from incomes */
+            $sql = "DELETE FROM incomes
+            WHERE income_category_assigned_to_user_id = :incomeCategoryId
+            AND user_id = :userId";
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindValue(':incomeCategoryId', $inputCategoryOfIncomeID, PDO::PARAM_INT);
+
+            $stmt->execute();
+
+            /**Delete incomes category */
+            if ($stmt == true) {
+                $sql = "DELETE FROM incomes_category_assigned_to_users
+            WHERE id = :incomeCategoryId
+            AND user_id = :userId";
+                $stmt = $db->prepare($sql);
+
+                $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+                $stmt->bindValue(':incomeCategoryId', $inputCategoryOfIncomeID, PDO::PARAM_INT);
+
+                $stmt->execute();
+                $this->info['deleteStatus'] = true;
+                return $this->info['deleteStatus'];
+            }
+        }
+
+        $this->info['deleteStatus'] = false;
+        return  $this->info['deleteStatus'];
+    }
+
+    public function edit()
+    {
+        $this->validateEditCategory();
+
+        if (empty($this->info['name'])) {
+
+            $userID = $_SESSION['user_id'];
+            $inputCategoryOfIncomeID = $_POST['editCategoryId'];
+            $inputCategoryOfIncome = $_POST['editCategoryName'];
+
+            $db = static::getDB();
+
+            $sql = "UPDATE incomes_category_assigned_to_users
+            SET name = :incomeCategoryName
+            WHERE id = :incomeCategoryId
+            AND user_id = :userId";
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindValue(':incomeCategoryId', $inputCategoryOfIncomeID, PDO::PARAM_INT);
+            $stmt->bindValue(':incomeCategoryName', $inputCategoryOfIncome, PDO::PARAM_STR);
 
             return $stmt->execute();
         }
@@ -95,9 +191,88 @@ class Incomes extends \Core\Model
         }
     }
 
-    public function currentMonthIncomes($user_ID)
+    public function validateEditCategory()
     {
 
+        if (isset($_POST['editCategoryName'])) {
+            $this->info['inputName'] = $_POST['editCategoryName'];
+            $inputCategoryOfIncome = $_POST['editCategoryName'];
+
+            $inputCategoryOfIncome = mb_strtolower($inputCategoryOfIncome, 'UTF-8');
+            $existingIncomeCategories = static::getIncomeCategoriesAssignedToUser();
+
+            foreach ($existingIncomeCategories as $incomesData) {
+                foreach ($incomesData as $name['name']) {
+
+                    $name['name'] = mb_strtolower($name['name'], 'UTF-8');
+
+                    if ($name['name'] == $inputCategoryOfIncome) {
+                        $this->info['name'] = "Kategoria o tej nazwie już istnieje!";
+                    }
+                }
+            }
+
+            $existingIncomeCategories = static::changeFromPolishToEnglish($existingIncomeCategories);
+
+            foreach ($existingIncomeCategories as $incomesData) {
+                foreach ($incomesData as $name['name']) {
+
+                    $name['name'] = mb_strtolower($name['name'], 'UTF-8');
+
+                    if ($name['name'] == $inputCategoryOfIncome) {
+                        $this->info['name'] = "Kategoria o tej nazwie już istnieje!";
+                    }
+                }
+            }
+
+            if ((strlen($inputCategoryOfIncome) > 35) || (strlen($inputCategoryOfIncome) < 2)) {
+                $this->info['name'] = "Nazwa kategorii powinna zawierać więcej niż 1 znak i mniej niż 35 znaków";
+            }
+        }
+    }
+
+    public function validateAddCategory()
+    {
+
+        if (isset($_POST['addIncomeCategory'])) {
+            $this->info['inputName'] = $_POST['addIncomeCategory'];
+            $inputCategoryOfIncome = $_POST['addIncomeCategory'];
+
+            $inputCategoryOfIncome = mb_strtolower($inputCategoryOfIncome, 'UTF-8');
+            $existingIncomeCategories = static::getIncomeCategoriesAssignedToUser();
+
+            foreach ($existingIncomeCategories as $incomesData) {
+                foreach ($incomesData as $name['name']) {
+
+                    $name['name'] = mb_strtolower($name['name'], 'UTF-8');
+
+                    if ($name['name'] == $inputCategoryOfIncome) {
+                        $this->info['addName'] = "Kategoria o tej nazwie już istnieje!";
+                    }
+                }
+            }
+
+            $existingIncomeCategories = static::changeFromPolishToEnglish($existingIncomeCategories);
+
+            foreach ($existingIncomeCategories as $incomesData) {
+                foreach ($incomesData as $name['name']) {
+
+                    $name['name'] = mb_strtolower($name['name'], 'UTF-8');
+
+                    if ($name['name'] == $inputCategoryOfIncome) {
+                        $this->info['addName'] = "Kategoria o tej nazwie już istnieje!";
+                    }
+                }
+            }
+
+            if ((strlen($inputCategoryOfIncome) > 35) || (strlen($inputCategoryOfIncome) < 2)) {
+                $this->info['addName'] = "Nazwa kategorii powinna zawierać więcej niż 1 znak i mniej niż 35 znaków";
+            }
+        }
+    }
+
+    public function currentMonthIncomes($user_ID)
+    {
         $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.date_of_income, incomes.income_comment
             FROM incomes, incomes_category_assigned_to_users
             WHERE incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
@@ -227,8 +402,9 @@ class Incomes extends \Core\Model
 
         if (!$incomesDetailedData) return false;
 
-        foreach ($incomesDetailedData as &$incomesData) {
-            foreach ($incomesData as &$name['name']) {
+
+        foreach ($incomesDetailedData as &$incomesDetailed) {
+            foreach ($incomesDetailed as &$name['name']) {
 
                 switch ($name['name']) {
                     case "Salary":
@@ -247,21 +423,29 @@ class Incomes extends \Core\Model
             }
         }
 
+        return $incomesDetailedData;
+    }
+
+    public static function changeFromPolishToEnglish($incomesDetailedData)
+    {
+        if (!$incomesDetailedData) return false;
+
+
         foreach ($incomesDetailedData as &$incomesDetailed) {
             foreach ($incomesDetailed as &$name['name']) {
 
                 switch ($name['name']) {
-                    case "Salary":
-                        $name['name'] = "Wynagrodzenie";
+                    case "Wynagrodzenie":
+                        $name['name'] = "Salary";
                         break;
-                    case "Interest":
-                        $name['name'] = "Odsetki bankowe";
+                    case "Odsetki bankowe":
+                        $name['name'] = "Interest";
                         break;
-                    case "Allegro":
-                        $name['name'] = "Sprzedaż na allegro";
+                    case "Sprzedaż na allegro":
+                        $name['name'] = "Allegro";
                         break;
-                    case "Another":
-                        $name['name'] = "Inne";
+                    case "Inne":
+                        $name['name'] = "Another";
                         break;
                 }
             }
@@ -325,22 +509,21 @@ class Incomes extends \Core\Model
     {
         $user = Auth::getUser();
 
-        if($user) {
+        if ($user) {
 
-        $user_ID = $user->id;
+            $user_ID = $user->id;
 
-        $sql = "SELECT name
+            $sql = "SELECT id, name
         FROM incomes_category_assigned_to_users
         WHERE incomes_category_assigned_to_users.user_id = '$user_ID'";
 
-        $db = static::getDB();
-        $stmt = $db->prepare($sql);
-        $stmt->execute();
+            $db = static::getDB();
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
 
-        $incomes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $incomes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        return static::changeFromEnglishToPolish($incomes);
-        
+            return static::changeFromEnglishToPolish($incomes);
         }
     }
 }

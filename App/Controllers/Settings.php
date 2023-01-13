@@ -6,6 +6,8 @@ use \Core\View;
 use \App\Models\User;
 use \App\Auth;
 use \App\Flash;
+use \App\Models\Incomes;
+use \App\Models\Expenses;
 
 class Settings extends Authenticated
 {
@@ -25,6 +27,14 @@ class Settings extends Authenticated
         View::renderTemplate('Settings/show.html', [
             'user' => $this->user
         ]);
+    }
+
+    public function deleteRecordsAction()
+    {
+        Incomes::deleteIncomeRecordsAssignedToUser();
+        Expenses::deleteExpenseRecordsAssignedToUser();
+        
+        View::renderTemplate('Settings/show.html');
     }
 
 }

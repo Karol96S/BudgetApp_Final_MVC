@@ -61,4 +61,22 @@ class Profile extends Authenticated
 
         }
     }
+
+    public function editUsernameAction()
+    {
+        $this->user->changeUsername($_POST['editUsername']);
+        
+        View::renderTemplate('Settings/show.html', [
+            'user' => $this->user
+        ]);
+    }
+
+    public function changePasswordAction()
+    {
+        $this->user->changePassword($_POST);
+        
+        View::renderTemplate('Settings/show.html', [
+            'user' => $this->user
+        ]);
+    }
 }

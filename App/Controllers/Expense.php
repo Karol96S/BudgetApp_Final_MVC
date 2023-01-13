@@ -105,4 +105,37 @@ class Expense extends Authenticated
             'expense' => $expense
         ]);
     }
+
+    public function addPaymentCategoryAction()
+    {
+        $expense = new Expenses($_POST);
+
+        $expense->addPaymentCategory();
+
+        View::renderTemplate('Settings/show.html', [
+            'expense' => $expense
+        ]);
+    }
+
+    public function editPaymentCategoryAction()
+    {
+        $expense = new Expenses($_POST);
+
+        $expense->editPayment();
+
+        View::renderTemplate('Settings/show.html', [
+            'expense' => $expense
+        ]);
+    }
+
+    public function deletePaymentCategoryAction()
+    {
+        $expense = new Expenses($_POST);
+
+        $expense->deletePayment();
+
+        View::renderTemplate('Settings/show.html', [
+            'expense' => $expense
+        ]);
+    }
 }

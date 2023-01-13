@@ -128,6 +128,22 @@ class Incomes extends \Core\Model
         return  $this->info['deleteStatus'];
     }
 
+    public static function deleteIncomeRecordsAssignedToUser()
+    {
+        $userID = $_SESSION['user_id'];
+
+        $db = static::getDB();
+
+        /**Delete all user records from incomes */
+        $sql = "DELETE FROM incomes
+            WHERE user_id = :userId";
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
     public function edit()
     {
         $this->validateEditCategory();
@@ -197,21 +213,15 @@ class Incomes extends \Core\Model
         if (isset($_POST['editCategoryName'])) {
             $this->info['inputName'] = $_POST['editCategoryName'];
             $inputCategoryOfIncome = $_POST['editCategoryName'];
+            $inputIncomePosition = $_POST['editIncomePosition'];
+            $counter = 0;
+            $index = 0;
+            $occurance = 0;
 
             $inputCategoryOfIncome = mb_strtolower($inputCategoryOfIncome, 'UTF-8');
             $existingIncomeCategories = static::getIncomeCategoriesAssignedToUser();
 
-            foreach ($existingIncomeCategories as $incomesData) {
-                foreach ($incomesData as $name['name']) {
-
-                    $name['name'] = mb_strtolower($name['name'], 'UTF-8');
-
-                    if ($name['name'] == $inputCategoryOfIncome) {
-                        $this->info['name'] = "Kategoria o tej nazwie już istnieje!";
-                    }
-                }
-            }
-
+            $existingIncomeCategoriesPL = $existingIncomeCategories;
             $existingIncomeCategories = static::changeFromPolishToEnglish($existingIncomeCategories);
 
             foreach ($existingIncomeCategories as $incomesData) {
@@ -221,12 +231,44 @@ class Incomes extends \Core\Model
 
                     if ($name['name'] == $inputCategoryOfIncome) {
                         $this->info['name'] = "Kategoria o tej nazwie już istnieje!";
+                        $this->info['id'] = $inputIncomePosition;
+                    }
+                }
+            }
+
+            foreach ($existingIncomeCategoriesPL as $incomesData) {
+                foreach ($incomesData as $name['name']) {
+
+                    $name['name'] = mb_strtolower($name['name'], 'UTF-8');
+
+                    if ($name['name'] == $inputCategoryOfIncome) {
+                        $this->info['name'] = "Kategoria o tej nazwie już istnieje!";
+                        $this->info['id'] = $inputIncomePosition;
                     }
                 }
             }
 
             if ((strlen($inputCategoryOfIncome) > 35) || (strlen($inputCategoryOfIncome) < 2)) {
                 $this->info['name'] = "Nazwa kategorii powinna zawierać więcej niż 1 znak i mniej niż 35 znaków";
+                $this->info['id'] = $inputIncomePosition;
+            }
+
+            foreach ($existingIncomeCategoriesPL as $incomesData) {
+                $counter++;
+                foreach ($incomesData as $name['name']) {
+
+                    $name['name'] = mb_strtolower($name['name'], 'UTF-8');
+
+                    if(($name['name'] == $inputCategoryOfIncome)) $occurance++;
+                    if (($name['name'] == $inputCategoryOfIncome)) {
+                        $index = $counter;
+                    }
+                }
+            }
+
+            if(($occurance == 1) && ($index != $inputIncomePosition)) {
+                $this->info['name'] = "Kategoria o tej nazwie już istnieje!";
+                $this->info['id'] = $inputIncomePosition;
             }
         }
     }
@@ -513,7 +555,7 @@ class Incomes extends \Core\Model
 
             $user_ID = $user->id;
 
-            $sql = "SELECT id, name
+            $sql = "SELECT name, id
         FROM incomes_category_assigned_to_users
         WHERE incomes_category_assigned_to_users.user_id = '$user_ID'";
 

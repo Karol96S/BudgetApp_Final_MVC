@@ -6,8 +6,8 @@
 
 {% block body %}
 <section id="workingSpace" class="container-fluid p-0">
-    <div id="mainContainerSettings" class="row justify-content-center">
-        <div id="outterLayer" class="row justify-content-center col col-xxl-8 text-center pt-4 mt-5 mx-0">
+    <div id="mainContainerSettings" class="row justify-content-center mx-0">
+        <div id="outterLayer" class="row justify-content-center col col-xxl-8 text-center pt-4 mt-5 mb-4 mx-0">
             <div id="subHeader" class="row justify-content-center">
                 <div class="col col-1"></div>
                 <div id="settingsHeader" class="col col-10 text-start">
@@ -149,7 +149,7 @@
                                     </div>
                                     {% endfor %}
                                     <div class="row align-items-center my-2">
-                                        <div class="col col-4 p-0 mt-4 text-start">
+                                        <div class="col col-12 col-md-4 p-0 mt-4 text-start">
                                             <button type="button" onclick="keepPosition()" class="btn btn-success"
                                                 data-bs-toggle="modal" data-bs-target="#modalAddIncomeCategory">
                                                 Dodaj nową kategorię
@@ -353,7 +353,7 @@
                                     </div>
                                     {% endfor %}
                                     <div class="row align-items-center my-2">
-                                        <div class="col col-4 p-0 mt-4 text-start">
+                                        <div class="col col-12 col-md-4 p-0 mt-4 text-start">
                                             <button type="button" onclick="keepPosition()" class="btn btn-success"
                                                 data-bs-toggle="modal" data-bs-target="#modalAddExpenseCategory">
                                                 Dodaj nową kategorię
@@ -447,10 +447,10 @@
                                     </div>
                                     {% for data in paymentMethodsAssignedToUser %}
                                     <div class="category row align-items-center my-2">
-                                        <div class="col col-10 text-start">
+                                        <div class="col col-8 col-lg-10 text-start">
                                             <p>{{ data.payment_method }}</p>
                                         </div>
-                                        <div class="col col-2">
+                                        <div class="col col-4 col-lg-2">
                                             <button type="button" onclick="keepPosition()"
                                                 class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                                 data-bs-target="#modalEditPaymentCategory{{ data.id }}">
@@ -554,7 +554,7 @@
                                     </div>
                                     {% endfor %}
                                     <div class="row align-items-center my-2">
-                                        <div class="col col-4 p-0 mt-4 text-start">
+                                        <div class="col col-12 col-md-4 p-0 mt-4 text-start">
                                             <button type="button" onclick="keepPosition()" class="btn btn-success"
                                                 data-bs-toggle="modal" data-bs-target="#modalAddPaymentCategory">
                                                 Dodaj nową kategorię

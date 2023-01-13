@@ -82,7 +82,12 @@ class Expenses extends \Core\Model
 
             $userID = $_SESSION['user_id'];
             $inputCategoryOfExpense = $_POST['addExpenseCategory'];
-            $inputExpenseLimit = $_POST['addExpenseLimit'];
+
+            if (!isset($_POST['addExpenseLimit']) || ($_POST['addExpenseLimit']) < 0 || ($_POST['addExpenseLimit'] == "")) {
+                $inputExpenseLimit = "0.00";
+            } else {
+                $inputExpenseLimit = $_POST['addExpenseLimit'];
+            }
 
             $db = static::getDB();
 
@@ -225,7 +230,7 @@ class Expenses extends \Core\Model
 
     public function edit()
     {
-        if(isset($this->info['name'])) unset($this->info['name']);
+        if (isset($this->info['name'])) unset($this->info['name']);
 
         $this->validateEditCategory();
 
@@ -248,9 +253,7 @@ class Expenses extends \Core\Model
             $stmt->bindValue(':expenseCategoryName', $inputCategoryOfExpense, PDO::PARAM_STR);
 
             return $stmt->execute();
-        } 
-
-        else if ((empty($this->info['name'])) && (isset($_POST['addExpenseLimit']))) {
+        } else if ((empty($this->info['name'])) && (isset($_POST['addExpenseLimit']))) {
 
             $userID = $_SESSION['user_id'];
             $inputCategoryOfExpenseID = $_POST['editExpenseCategoryId'];
@@ -363,7 +366,7 @@ class Expenses extends \Core\Model
             $limit = number_format($limit['category_limit']);
             if (isset($_POST['addExpenseLimit'])) $inputLimit = $_POST['addExpenseLimit'];
             $inputLimit = number_format($inputLimit);
-            
+
 
             foreach ($existingExpenseCategories as $expensesData) {
                 foreach ($expensesData as $name['name']) {
@@ -404,18 +407,18 @@ class Expenses extends \Core\Model
 
                     $name['name'] = mb_strtolower($name['name'], 'UTF-8');
 
-                    if(($name['name'] == $inputCategoryOfExpense)) $occurance++;
+                    if (($name['name'] == $inputCategoryOfExpense)) $occurance++;
                     if (($name['name'] == $inputCategoryOfExpense) && ($inputLimit !== $limit)) {
                         $index = $counter;
                     }
                 }
             }
 
-            if(($index == $inputExpensePosition) && ($occurance == 1)) {
+            if (($index == $inputExpensePosition) && ($occurance == 1)) {
                 $this->info['name'] = [];
             }
 
-            if(($occurance == 1) && ($index != $inputExpensePosition)) {
+            if (($occurance == 1) && ($index != $inputExpensePosition)) {
                 $this->info['name'] = "Kategoria o tej nazwie już istnieje!";
                 $this->info['id'] = $inputExpensePosition;
             }
@@ -482,14 +485,14 @@ class Expenses extends \Core\Model
 
                     $name['payment_method'] = mb_strtolower($name['payment_method'], 'UTF-8');
 
-                    if(($name['payment_method'] == $inputCategoryOfPayment)) $occurance++;
+                    if (($name['payment_method'] == $inputCategoryOfPayment)) $occurance++;
                     if (($name['payment_method'] == $inputCategoryOfPayment)) {
                         $index = $counter;
                     }
                 }
             }
 
-            if(($occurance == 1) && ($index != $inputPaymentPosition)) {
+            if (($occurance == 1) && ($index != $inputPaymentPosition)) {
                 $this->info['editPaymentName'] = "Kategoria o tej nazwie już istnieje!";
                 $this->info['paymentId'] = $inputPaymentPosition;
             }

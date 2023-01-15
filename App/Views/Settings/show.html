@@ -6,8 +6,8 @@
 
 {% block body %}
 <section id="workingSpace" class="container-fluid p-0">
-    <div class="row justify-content-center">
-        <div id="outterLayer" class="row justify-content-center col col-xxl-8 text-center pt-4 mt-5 mx-0">
+    <div id="mainContainerSettings" class="row justify-content-center mx-0">
+        <div id="outterLayer" class="row justify-content-center col col-xxl-8 text-center pt-4 mt-5 mb-4 mx-0">
             <div id="subHeader" class="row justify-content-center">
                 <div class="col col-1"></div>
                 <div id="settingsHeader" class="col col-10 text-start">
@@ -45,48 +45,78 @@
                                             <p>{{ data.name }}</p>
                                         </div>
                                         <div class="col col-4 col-lg-2">
-                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditIncomeCategory">
+                                            <button type="button" onclick="keepPosition()"
+                                                class="btn btn-primary btn-sm" id="editIncome{{ data.id }}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalEditIncomeCategory{{ data.id }}">
                                                 <span><img class="align-self-center"
                                                         src="/images/white-24dp/1x/outline_drive_file_rename_outline_white_24dp.png"
                                                         alt="edit position icon">
                                                 </span>
                                             </button>
-                                            <div class="modal fade" id="modalEditIncomeCategory" tabindex="-1" aria-labelledby="modalEditIncomeCategoryLabel" aria-hidden="true">
+                                            <div class="modal fade" id="modalEditIncomeCategory{{ data.id }}"
+                                                tabindex="-1"
+                                                aria-labelledby="modalEditIncomeCategoryLabel{{ data.id }}"
+                                                aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
-                                                  <div class="modal-content">
-                                                    <div class="modal-header">
-                                                      <h3 class="modal-title fs-5" id="modalEditIncomeCategoryLabel">Edytuj kategorię</h3>
-                                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body text-start">
-                                                        <form>
-                                                          <div class="mb-5">
-                                                            <label for="recipient-name" class="col-form-label">Nazwa kategorii:</label>
-                                                            <input type="text" class="form-control" id="recipient-name">
-                                                          </div>
-                                                          <div class="mb-3">
-                                                            <input class="form-check-input" type="checkbox" value="" id="incomeLimitCheckbox">
-                                                            <label class="form-check-label mb-2" for="incomeLimitCheckbox">Ustaw limit:</label>
-                                                            <input type="number" step="0.01" min="0" class="form-control" id="message-text">
-                                                          </div>
+                                                    <div class="modal-content">
+                                                        <form action="/income/editIncomeCategory" method="post">
+                                                            <div class="modal-header alert alert-primary">
+                                                                <h5 class="modal-title fs-5"
+                                                                    id="modalEditIncomeCategoryLabel{{ data.id }}">
+                                                                    <b>Edytuj
+                                                                        kategorię</b>
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <div>
+                                                                    <label for="recipient-name{{ data.id }}"
+                                                                        class="col-form-label">Nazwa
+                                                                        kategorii:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="recipient-name{{ data.id }}"
+                                                                        name="editCategoryName" value="{{ data.name }}"
+                                                                        required>
+                                                                    <input type="hidden" name="editCategoryId"
+                                                                        value="{{ data.id }}">
+                                                                </div>
+                                                                <input type="hidden"
+                                                                    id="editIncomePosition{{ loop.index }}"
+                                                                    name="editIncomePosition" value="{{ loop.index }}">
+                                                                {% if ((income.info.name is not empty) and
+                                                                (income.info.id == loop.index)) %}
+                                                                <input type="hidden" id="errorEditIncome"
+                                                                    value="{{ data.id }}">
+                                                                <div>
+                                                                    <p class="text-danger">{{ income.info.name }}
+                                                                    </p>
+                                                                </div>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">Zapisz</button>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Wróć</button>
+                                                            </div>
                                                         </form>
-                                                      </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-primary">Zapisz</button>
-                                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Wróć</button>
                                                     </div>
-                                                  </div>
                                                 </div>
-                                              </div>
-                                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#modalDeleteIncomeCategory">
+                                            </div>
+                                            <button type="button" onclick="keepPosition()" class="btn btn-danger btn-sm"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalDeleteIncomeCategory{{ data.id }}">
                                                 <span><img class="align-self-center"
                                                         src="/images/white-24dp/1x/baseline_delete_outline_white_24dp.png"
                                                         alt="delete icon">
                                                 </span>
                                             </button>
-                                            <div class="modal fade" id="modalDeleteIncomeCategory" tabindex="-1"
-                                                aria-labelledby="modalDeleteIncomeCategoryLabel" aria-hidden="true">
+                                            <div class="modal fade" id="modalDeleteIncomeCategory{{ data.id }}"
+                                                tabindex="-1"
+                                                aria-labelledby="modalDeleteIncomeCategoryLabel{{ data.id }}"
+                                                aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -95,11 +125,21 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             <p class="text-danger">
-                                                                Czy na pewno chcesz usunąć tę kategorię? Zostaną również usunięte dodane rekordy dla tej kategorii.
+                                                                Czy na pewno chcesz usunąć kategorię:
+                                                                <cite>{{data.name}}</cite> ?
                                                             </p>
+                                                            <ul class="px-0">
+                                                                Wszystkie porzednie rekordy tej kategorii zostaną
+                                                                utracone.
+                                                            </ul>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-primary">Usuń</button>
+                                                            <form action="/income/deleteIncomeCategory" method="post">
+                                                                <button type="submit" id="deleteIncome{{ data.id }}"
+                                                                    class="btn btn-danger">Usuń</button>
+                                                                <input type="hidden" name="deleteCategoryId"
+                                                                    value="{{ data.id }}">
+                                                            </form>
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-bs-dismiss="modal">Wróć</button>
                                                         </div>
@@ -110,37 +150,53 @@
                                     </div>
                                     {% endfor %}
                                     <div class="row align-items-center my-2">
-                                        <div class="col col-4 p-0 mt-4 text-start">
-                                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAddIncomeCategory">
+                                        <div class="col col-12 col-md-4 p-0 mt-4 text-start">
+                                            <button type="button" onclick="keepPosition()" class="btn btn-success"
+                                                id="addIncome" data-bs-toggle="modal"
+                                                data-bs-target="#modalAddIncomeCategory">
                                                 Dodaj nową kategorię
                                             </button>
-                                            <div class="modal fade" id="modalAddIncomeCategory" tabindex="-1" aria-labelledby="modalAddIncomeCategoryLabel" aria-hidden="true">
+                                            <div class="modal fade" id="modalAddIncomeCategory" tabindex="-1"
+                                                aria-labelledby="modalAddIncomeCategoryLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
-                                                  <div class="modal-content">
-                                                    <div class="modal-header">
-                                                      <h3 class="modal-title fs-5" id="modalAddIncomeCategoryLabel">Dodaj nową kategorię</h3>
-                                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body text-start">
-                                                        <form>
-                                                          <div class="mb-5">
-                                                            <label for="recipient-name" class="col-form-label">Nazwa kategorii:</label>
-                                                            <input type="text" class="form-control" id="recipient-name">
-                                                          </div>
-                                                          <div class="mb-3">
-                                                            <input class="form-check-input" type="checkbox" value="" id="incomeLimitCheckbox">
-                                                            <label class="form-check-label mb-2" for="incomeLimitCheckbox">Ustaw limit:</label>
-                                                            <input type="number" step="0.01" min="0" class="form-control" id="message-text">
-                                                          </div>
+                                                    <div class="modal-content">
+                                                        <form action="/income/addIncomeCategory" method="post">
+                                                            <div class="modal-header alert alert-success">
+                                                                <h5 class="modal-title fs-5"
+                                                                    id="modalAddIncomeCategoryLabel"><b>Dodaj nową
+                                                                        kategorię</b>
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <div>
+                                                                    <label for="addIncomeCategory"
+                                                                        class="col-form-label">Nazwa
+                                                                        kategorii:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="addIncomeCategory" name="addIncomeCategory"
+                                                                        required>
+                                                                    {% if ((income.info.addName is not empty) and
+                                                                    (income.info.inputName is not empty)) %}
+                                                                    <input type="hidden" id="errorAddIncome">
+                                                                    <div>
+                                                                        <p class="text-danger">{{ income.info.addName }}
+                                                                        </p>
+                                                                    </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="submit"
+                                                                    class="btn btn-success">Dodaj</button>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Wróć</button>
+                                                            </div>
                                                         </form>
-                                                      </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-primary">Zapisz</button>
-                                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Wróć</button>
                                                     </div>
-                                                  </div>
                                                 </div>
-                                              </div>
+                                            </div>
                                         </div>
                                         <div class="col col-8"></div>
                                     </div>
@@ -176,30 +232,187 @@
                                     </div>
                                     {% for data in expenseCategoriesAssignedToUser %}
                                     <div class="category row align-items-center my-2">
-                                        <div class="col col-10 text-start">
+                                        <div class="col col-8 col-lg-10 text-start">
                                             <p>{{ data.name }}</p>
                                         </div>
-                                        <div class="col col-2">
-                                            <button type="button" class="btn btn-primary btn-sm">
+                                        <div class="col col-4 col-lg-2">
+                                            <button type="button" onclick="keepPosition()"
+                                                class="btn btn-primary btn-sm" id="editExpense{{ data.id }}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalEditExpenseCategory{{ data.id }}">
                                                 <span><img class="align-self-center"
                                                         src="/images/white-24dp/1x/outline_drive_file_rename_outline_white_24dp.png"
                                                         alt="edit position icon">
                                                 </span>
                                             </button>
-                                            <button type="button" class="btn btn-danger btn-sm">
+                                            <div class="modal fade" id="modalEditExpenseCategory{{ data.id }}"
+                                                tabindex="-1"
+                                                aria-labelledby="modalEditExpenseCategoryLabel{{ data.id }}"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <form action="/expense/editExpenseCategory" method="post">
+                                                            <div class="modal-header alert alert-primary">
+                                                                <h5 class="modal-title fs-5"
+                                                                    id="modalEditExpenseCategoryLabel{{ data.id }}">
+                                                                    <b>Edytuj
+                                                                        kategorię</b>
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <div>
+                                                                    <label for="editExpenseCategory{{ data.id }}"
+                                                                        class="col-form-label">Nazwa
+                                                                        kategorii: </label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="editExpenseCategory{{ data.id }}"
+                                                                        name="editExpenseCategoryName"
+                                                                        value="{{ data.name }}" required>
+                                                                    <input type="hidden" name="editExpensePosition"
+                                                                        id="editExpensePosition{{ loop.index }}"
+                                                                        value="{{ loop.index }}">
+                                                                </div>
+                                                                {% if ((expense.info.name is not empty) and
+                                                                (expense.info.id == loop.index)) %}
+                                                                <input type="hidden" id="errorEditExpense"
+                                                                    value="{{ data.id }}">
+                                                                <div>
+                                                                    <p class="text-danger">{{ expense.info.name }}</p>
+                                                                </div>
+                                                                {% endif %}
+                                                                <div class="mb-3 mt-5">
+                                                                    <label class="form-check-label mb-2"
+                                                                        for="editExpenseLimitCheckbox{{ data.id }}">Ustaw
+                                                                        limit:</label>
+                                                                    <input type="number" step="0.01" min="0"
+                                                                        class="form-control"
+                                                                        id="editExpenseLimit{{ data.id }}"
+                                                                        name="addExpenseLimit"
+                                                                        oninput="validity.valid||(value='');"
+                                                                        value="{{ data.expenseLimit }}">
+                                                                    <input type="hidden" name="editExpenseCategoryId"
+                                                                        value="{{ data.id }}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">Zapisz</button>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Wróć</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="button" onclick="keepPosition()" class="btn btn-danger btn-sm"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalDeleteExpenseCategory{{ data.id }}">
                                                 <span><img class="align-self-center"
                                                         src="/images/white-24dp/1x/baseline_delete_outline_white_24dp.png"
                                                         alt="delete icon">
                                                 </span>
                                             </button>
+                                            <div class="modal fade" id="modalDeleteExpenseCategory{{ data.id }}"
+                                                tabindex="-1"
+                                                aria-labelledby="modalDeleteExpenseCategoryLabel{{ data.id }}"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p class="text-danger">
+                                                                Czy na pewno chcesz usunąć kategorię:
+                                                                <cite>{{data.name}}</cite> ?
+                                                            </p>
+                                                            <ul class="px-0">
+                                                                Wszystkie porzednie rekordy tej kategorii zostaną
+                                                                utracone.
+                                                            </ul>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <form action="/expense/deleteExpenseCategory" method="post">
+                                                                <button type="submit" id="deleteExpense{{ data.id }}"
+                                                                    class="btn btn-danger">Usuń</button>
+                                                                <input type="hidden" name="deleteExpenseCategoryId"
+                                                                    value="{{ data.id }}">
+                                                            </form>
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Wróć</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+                                        {% if data.expenseLimit > 0 %}
+                                        <div class="col col-8 col-lg-10 limitStyle text-start">
+                                            <p>Limit: {{ data.expenseLimit }}</p>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                     {% endfor %}
                                     <div class="row align-items-center my-2">
-                                        <div class="col col-4 p-0 mt-4 text-start">
-                                            <button type="button" class="btn btn-success">
+                                        <div class="col col-12 col-md-4 p-0 mt-4 text-start">
+                                            <button type="button" onclick="keepPosition()" class="btn btn-success"
+                                                id="addExpense" data-bs-toggle="modal"
+                                                data-bs-target="#modalAddExpenseCategory">
                                                 Dodaj nową kategorię
                                             </button>
+                                            <div class="modal fade" id="modalAddExpenseCategory" tabindex="-1"
+                                                aria-labelledby="modalAddExpenseCategoryLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <form action="/expense/addExpenseCategory" method="post">
+                                                            <div class="modal-header alert alert-success">
+                                                                <h5 class="modal-title fs-5"
+                                                                    id="modalAddExpenseCategoryLabel"><b>Dodaj nową
+                                                                        kategorię</b>
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <div>
+                                                                    <label for="addExpenseCategory"
+                                                                        class="col-form-label">Nazwa
+                                                                        kategorii:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="addExpenseCategory"
+                                                                        name="addExpenseCategory" required>
+                                                                    {% if ((expense.info.addName is not empty) and
+                                                                    (expense.info.inputName is not empty)) %}
+                                                                    <input type="hidden" id="errorAddExpense">
+                                                                    <div>
+                                                                        <p class="text-danger">{{ expense.info.addName
+                                                                            }}
+                                                                        </p>
+                                                                    </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="mb-3 mt-5">
+                                                                    <label class="form-check-label mb-2"
+                                                                        for="addExpenseLimitCheckbox">Ustaw
+                                                                        limit:</label>
+                                                                    <input type="number" step="0.01" min="0"
+                                                                        class="form-control" id="addExpenseLimit"
+                                                                        name="addExpenseLimit"
+                                                                        oninput="validity.valid||(value='');">
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="submit"
+                                                                    class="btn btn-success">Dodaj</button>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Wróć</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col col-8"></div>
                                     </div>
@@ -235,30 +448,166 @@
                                     </div>
                                     {% for data in paymentMethodsAssignedToUser %}
                                     <div class="category row align-items-center my-2">
-                                        <div class="col col-10 text-start">
+                                        <div class="col col-8 col-lg-10 text-start">
                                             <p>{{ data.payment_method }}</p>
                                         </div>
-                                        <div class="col col-2">
-                                            <button type="button" class="btn btn-primary btn-sm">
+                                        <div class="col col-4 col-lg-2">
+                                            <button type="button" onclick="keepPosition()"
+                                                class="btn btn-primary btn-sm" id="editPayment{{ data.id }}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalEditPaymentCategory{{ data.id }}">
                                                 <span><img class="align-self-center"
                                                         src="/images/white-24dp/1x/outline_drive_file_rename_outline_white_24dp.png"
                                                         alt="edit position icon">
                                                 </span>
                                             </button>
-                                            <button type="button" class="btn btn-danger btn-sm">
+                                            <div class="modal fade" id="modalEditPaymentCategory{{ data.id }}"
+                                                tabindex="-1"
+                                                aria-labelledby="modalEditPaymentCategoryLabel{{ data.id }}"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <form action="/expense/editPaymentCategory" method="post">
+                                                            <div class="modal-header alert alert-primary">
+                                                                <h5 class="modal-title fs-5"
+                                                                    id="modalEditPaymentCategoryLabel{{ data.id }}">
+                                                                    <b>Edytuj
+                                                                        kategorię</b>
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <div>
+                                                                    <label for="editPaymentCategory{{ data.id }}"
+                                                                        class="col-form-label">Nazwa
+                                                                        kategorii:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="editPaymentCategory{{ data.id }}"
+                                                                        name="editPaymentCategory"
+                                                                        value="{{ data.payment_method }}" required>
+                                                                    <input type="hidden"
+                                                                        id="editPaymentCategoryId{{ data.id }}"
+                                                                        name="editPaymentCategoryId"
+                                                                        value="{{ data.id }}">
+                                                                </div>
+                                                                <input type="hidden"
+                                                                    id="editPaymentPosition{{ loop.index }}"
+                                                                    name="editPaymentPosition" value="{{ loop.index }}">
+                                                                {% if ((expense.info.editPaymentName is not empty) and
+                                                                (expense.info.paymentId == loop.index)) %}
+                                                                <input type="hidden" id="errorEditPayment"
+                                                                    value="{{ data.id }}">
+                                                                <div>
+                                                                    <p class="text-danger">{{
+                                                                        expense.info.editPaymentName }}
+                                                                    </p>
+                                                                </div>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">Zapisz</button>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Wróć</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="button" onclick="keepPosition()" class="btn btn-danger btn-sm"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalDeletePaymentCategory{{ data.id }}">
                                                 <span><img class="align-self-center"
                                                         src="/images/white-24dp/1x/baseline_delete_outline_white_24dp.png"
                                                         alt="delete icon">
                                                 </span>
                                             </button>
+                                            <div class="modal fade" id="modalDeletePaymentCategory{{ data.id }}"
+                                                tabindex="-1"
+                                                aria-labelledby="modalDeletePaymentCategoryLabel{{ data.id }}"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p class="text-danger">
+                                                                Czy na pewno chcesz usunąć kategorię:
+                                                                <cite>{{data.payment_method}}</cite> ?
+                                                            </p>
+                                                            <ul class="px-0">
+                                                                Wszystkie porzednie rekordy tej kategorii zostaną
+                                                                utracone.
+                                                            </ul>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <form action="/expense/deletePaymentCategory" method="post">
+                                                                <button type="submit" id="deletePayment{{ data.id }}"
+                                                                    class="btn btn-danger">Usuń</button>
+                                                                <input type="hidden" name="deletePaymentCategoryId"
+                                                                    value="{{ data.id }}">
+                                                            </form>
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Wróć</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     {% endfor %}
                                     <div class="row align-items-center my-2">
-                                        <div class="col col-4 p-0 mt-4 text-start">
-                                            <button type="button" class="btn btn-success">
+                                        <div class="col col-12 col-md-4 p-0 mt-4 text-start">
+                                            <button type="button" onclick="keepPosition()" class="btn btn-success"
+                                                id="addPayment" data-bs-toggle="modal"
+                                                data-bs-target="#modalAddPaymentCategory">
                                                 Dodaj nową kategorię
                                             </button>
+                                            <div class="modal fade" id="modalAddPaymentCategory" tabindex="-1"
+                                                aria-labelledby="modalAddPaymentCategoryLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <form action="/expense/addPaymentCategory" method="post">
+                                                            <div class="modal-header alert alert-success">
+                                                                <h5 class="modal-title fs-5"
+                                                                    id="modalAddPaymentCategoryLabel"><b>Dodaj nową
+                                                                        kategorię</b>
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <div>
+                                                                    <label for="addPaymentCategory"
+                                                                        class="col-form-label">Nazwa
+                                                                        kategorii:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="addPaymentCategory"
+                                                                        name="addPaymentCategory" required>
+                                                                    {% if ((expense.info.addPayment is not empty) and
+                                                                    (expense.info.inputName is not empty)) %}
+                                                                    <input type="hidden" id="errorAddPayment">
+                                                                    <div>
+                                                                        <p class="text-danger">{{
+                                                                            expense.info.addPayment }}
+                                                                        </p>
+                                                                    </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="submit"
+                                                                    class="btn btn-success">Dodaj</button>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Wróć</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col col-8"></div>
                                     </div>
@@ -303,12 +652,52 @@
                                             </div>
                                         </div>
                                         <div class="col col-2">
-                                            <button type="button" class="btn btn-primary btn-sm">
+                                            <button type="button" onclick="keepPosition()"
+                                                class="btn btn-primary btn-sm" id="editName" data-bs-toggle="modal"
+                                                data-bs-target="#modalEditUsername">
                                                 <span><img class="align-self-center"
                                                         src="/images/white-24dp/1x/outline_drive_file_rename_outline_white_24dp.png"
                                                         alt="edit position icon">
                                                 </span>
                                             </button>
+                                            <div class="modal fade" id="modalEditUsername" tabindex="-1"
+                                                aria-labelledby="modalEditUsernameLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <form action="/profile/editUsername" method="post">
+                                                            <div class="modal-header alert alert-primary">
+                                                                <h5 class="modal-title fs-5" id="modalEditUsername">
+                                                                    <b>Zmień nazwę</b>
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <div>
+                                                                    <label for="editUsername"
+                                                                        class="col-form-label">Nazwa
+                                                                        kategorii:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="editUsername" name="editUsername"
+                                                                        value="{{ current_user.username }}" required>
+                                                                </div>
+                                                                {% if (user.info.name is not empty) %}
+                                                                <input type="hidden" id="errorEditName">
+                                                                <div>
+                                                                    <p class="text-danger">{{ user.info.name }}</p>
+                                                                </div>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">Zapisz</button>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Wróć</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="category row align-items-center my-2">
@@ -321,12 +710,6 @@
                                             </div>
                                         </div>
                                         <div class="col col-2">
-                                            <button type="button" class="btn btn-primary btn-sm">
-                                                <span><img class="align-self-center"
-                                                        src="/images/white-24dp/1x/outline_drive_file_rename_outline_white_24dp.png"
-                                                        alt="edit position icon">
-                                                </span>
-                                            </button>
                                         </div>
                                     </div>
                                     <div class="category row align-items-center my-2">
@@ -336,12 +719,105 @@
                                         <div class="changePasswordText col col-2 text-end"><label
                                                 for="changePassword">Zmień hasło</label></div>
                                         <div class="col col-2">
-                                            <button type="button" id="changePassword" class="btn btn-primary btn-sm">
+                                            <button type="button" onclick="keepPosition()"
+                                                class="btn btn-primary btn-sm" id="editPassword" data-bs-toggle="modal"
+                                                data-bs-target="#modalChangePassword{{ data.id }}">
                                                 <span><img class="align-self-center"
                                                         src="/images/white-24dp/1x/outline_drive_file_rename_outline_white_24dp.png"
                                                         alt="edit position icon">
                                                 </span>
                                             </button>
+                                            <div class="modal fade" id="modalChangePassword" tabindex="-1"
+                                                aria-labelledby="modalChangePasswordLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <form action="/profile/changePassword" method="post">
+                                                            <div class="modal-header alert alert-primary">
+                                                                <h5 class="modal-title fs-5"
+                                                                    id="modalChangePasswordLabel">
+                                                                    <b>Zmień hasło</b>
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <div>
+                                                                    <label for="newPassword"
+                                                                        class="col-form-label">Wprowadź nowe
+                                                                        hasło:</label>
+                                                                    <input type="password" class="form-control"
+                                                                        id="newPassword" name="newPassword" value=""
+                                                                        required>
+                                                                </div>
+                                                                {% if (user.info.password is not empty) %}
+                                                                <input type="hidden" id="errorEditPassword">
+                                                                <div>
+                                                                    <p class="text-danger">{{ user.info.password }}</p>
+                                                                </div>
+                                                                {% endif %}
+                                                                <div class="mb-3 mt-5">
+                                                                    <label for="repeatNewPassword"
+                                                                        class="col-form-label">Powtórz hasło:</label>
+                                                                    <input type="password" class="form-control"
+                                                                        id="repeatNewPassword" name="repeatNewPassword"
+                                                                        value="" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">Zapisz</button>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Wróć</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center my-4">
+                                        <div class="col col-12 text-center">
+                                            <div class="row">
+                                                <div class="d-grid gap-2 col-6 mx-0 px-0">
+                                                    <button type="button" onclick="keepPosition()"
+                                                        class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                        data-bs-target="#modalDeleteRecords">
+                                                        Usuń wszystkie rekordy przychodów i wydatków
+                                                    </button>
+                                                    <div class="modal fade" id="modalDeleteRecords" tabindex="-1"
+                                                        aria-labelledby="modalDeleteRecordsLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <form action="/settings/deleteRecords" method="post">
+                                                                    <div class="modal-header alert alert-danger">
+                                                                        <h5 class="modal-title fs-5"
+                                                                            id="modalDeleteRecordsLabel">
+                                                                            <b>Usuń rekordy</b>
+                                                                        </h5>
+                                                                        <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body text-start">
+                                                                        <div class="text-danger text-center mb-3">
+                                                                            Czy na pewno chcesz usunąc historię
+                                                                            wprowadzanych przychodów i wydatków?
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="submit"
+                                                                            class="btn btn-danger">Usuń</button>
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Wróć</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col col-6 col-md-4">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -356,5 +832,121 @@
             </div>
         </div>
     </div>
+    <button type="button" class="btn btn-primary btn-sm" id="successEdit"
+        data-bs-toggle="modal" data-bs-target="#modalSuccessEdit" style="display: none;">
+    </button>
+    <div class="modal fade" id="modalSuccessEdit" tabindex="-1" aria-labelledby="modalSuccessEdit" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header mb-0">
+                    <h5 class="modal-title fs-5" id="modalSuccessEditLabel">
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center alert-success">
+                    {% if (income.status.edit is not empty) %}
+                    <input type="hidden" id="successEditMessage">
+                    {% endif %}
+                    {% if (expense.status.edit is not empty) %}
+                    <input type="hidden" id="successEditMessage">
+                    {% endif %}
+                    {% if (expense.status.editPayment is not empty) %}
+                    <input type="hidden" id="successEditMessage">
+                    {% endif %}
+                    <div class="row justify-content-center">
+                        <img src="/images/2x/outline_task_alt_black_24dp.png" alt="validationComplete" class="success" id="checkmarkImg">
+                    </div>
+                    <div class="row">
+                        <b>Zmieniono!</b>
+                    </div>
+                </div>
+                <div class="modal-footer mb-0">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-primary btn-sm" id="successAdd"
+        data-bs-toggle="modal" data-bs-target="#modalSuccessAdd" style="display: none;">
+    </button>
+    <div class="modal fade" id="modalSuccessAdd" tabindex="-1" aria-labelledby="modalSuccessAdd" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header mb-0">
+                    <h5 class="modal-title fs-5" id="modalSuccessAddLabel">
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center alert-success">
+                    {% if (income.status.add is not empty) %}
+                    <input type="hidden" id="successAddMessage">
+                    {% endif %}
+                    {% if (expense.status.add is not empty) %}
+                    <input type="hidden" id="successAddMessage">
+                    {% endif %}
+                    {% if (expense.status.addPayment is not empty) %}
+                    <input type="hidden" id="successAddMessage">
+                    {% endif %}
+                    {% if (user.status.name is not empty) %}
+                    <input type="hidden" id="successAddMessage">
+                    {% endif %}
+                    {% if (user.status.password is not empty) %}
+                    <input type="hidden" id="successAddMessage">
+                    {% endif %}
+                    <div class="row justify-content-center">
+                        <img src="/images/2x/outline_task_alt_black_24dp.png" alt="validationComplete" class="success" id="checkmarkImg">
+                    </div>
+                    <div class="row">
+                        <b>Dodano!</b>
+                    </div>
+                </div>
+                <div class="modal-footer mb-0">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-primary btn-sm" id="successDelete"
+        data-bs-toggle="modal" data-bs-target="#modalSuccessDelete" style="display: none;">
+    </button>
+    <div class="modal fade" id="modalSuccessDelete" tabindex="-1" aria-labelledby="modalSuccessDelete" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header mb-0">
+                    <h5 class="modal-title fs-5" id="modalSuccessDeleteLabel">
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center alert-success">
+                    {% if (income.status.delete is not empty) %}
+                    <input type="hidden" id="successDeleteMessage">
+                    {% endif %}
+                    {% if (expense.status.delete is not empty) %}
+                    <input type="hidden" id="successDeleteMessage">
+                    {% endif %}
+                    {% if (expense.status.deletePayment is not empty) %}
+                    <input type="hidden" id="successDeleteMessage">
+                    {% endif %}
+                    {% if (delete is not empty) %}
+                    <input type="hidden" id="successDeleteMessage">
+                    {% endif %}
+                    <div class="row justify-content-center">
+                        <img src="/images/2x/outline_task_alt_black_24dp.png" alt="validationComplete" class="success" id="checkmarkImg">
+                    </div>
+                    <div class="row">
+                        <b>Usunięto!</b>
+                    </div>
+                </div>
+                <div class="modal-footer mb-0">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
+
+{% endblock %}
+
+{% block footer %}
+<script src="/js/app.js"></script>
 {% endblock %}

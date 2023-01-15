@@ -21,6 +21,8 @@ class User extends \Core\Model
      * @var array
      */
     public $errors = [];
+    public $info = [];
+    public $status = [];
 
     /**
      * Class constructor
@@ -446,6 +448,94 @@ class User extends \Core\Model
         }
 
         return false;
+    }
+
+    public function changeUsername($newUsername)
+    {
+        if(isset($this->info['name'])) unset($this->info['name']);
+        $inputUsername = $newUsername;
+        $newUsername = strtolower($newUsername);
+        $previousName = strtolower($this->username);
+        $userID = $this->id;
+
+        if ((strlen($newUsername) < 3) || (strlen($newUsername) > 20)) {
+            $this->info['name'] = 'Nazwa użytkownika musi posiadać od 3 do 20 znaków!';
+        }
+
+        if ($previousName == $newUsername) {
+            $this->info['name'] = 'Nazwa użytkownika musi się różnić!';
+        }
+
+        if(!isset($this->info['name'])) {
+            $this->status['name'] = true;
+
+            $db = static::getDB();
+
+            $sql = "UPDATE users
+            SET username = :newUsername
+            WHERE id = :userId";
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindValue(':newUsername',  $inputUsername, PDO::PARAM_STR);
+
+            return $stmt->execute();
+        }
+    }
+
+    public function changePassword()
+    {
+        if(isset($this->info['password'])) unset($this->info['password']);
+        $userInputPassword = $_POST['newPassword'];
+        $newPassword = $_POST['newPassword'];
+        $newPassword = strtolower($newPassword);
+        $repeatedPassword = $_POST['repeatNewPassword'];
+        $repeatedPassword = strtolower($repeatedPassword);
+        $userID = $this->id;
+
+        if (isset($_POST['newPassword'])) {
+
+            if ((strlen($newPassword) < 6) || (strlen($newPassword) > 20)) {
+                $this->info['password'] = 'Hasło musi zawierać od 4 do 20 znaków!';
+            }
+
+            if (preg_match('/.*[a-z]+.*/i', $newPassword) == 0) {
+                $this->info['password'] = 'Hasło wymaga przynajmniej jednej litery!';
+            }
+
+            if (preg_match('/.*\d+.*/i', $newPassword) == 0) {
+                $this->info['password'] = 'Hasło wymaga przynajmniej jednej cyfry!';
+            }
+        }
+
+        // Repeat Password
+        if (isset($repeatedPassword)) {
+
+            if ($newPassword !== $repeatedPassword) {
+                $this->info['password'] = 'Hasła muszą być takie same!';
+            }
+        }
+
+        if (password_verify( $userInputPassword, $this->password)) {
+            $this->info['password'] = 'Hasło musi się różnic od poprzednio użytego!';
+        }
+
+        if(!isset($this->info['password'])) {
+            $this->status['password'] = true;
+            $password_hash = password_hash($userInputPassword, PASSWORD_DEFAULT);
+
+            $db = static::getDB();
+
+            $sql = "UPDATE users
+            SET password = :newPassword
+            WHERE id = :userId";
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindValue(':newPassword',  $password_hash, PDO::PARAM_STR);
+
+            return $stmt->execute();
+        }
     }
     
 }

@@ -58,4 +58,38 @@ class Income extends Authenticated
         View::renderTemplate('Income/success.html');
     }
 
+    public function editIncomeCategoryAction()
+    {
+        $income = new Incomes($_POST);
+
+        $income->edit();
+
+        View::renderTemplate('Settings/show.html', [
+            'income' => $income
+        ]);
+    }
+
+    public function addIncomeCategoryAction()
+    {
+        $income = new Incomes($_POST);
+
+        $income->addCategory();
+
+        View::renderTemplate('Settings/show.html', [
+            'income' => $income
+        ]);
+
+    }
+
+    public function deleteIncomeCategoryAction()
+    {
+        $income = new Incomes($_POST);
+
+        $income->deleteCategory();
+
+        View::renderTemplate('Settings/show.html', [
+            'income' => $income
+        ]);
+    }
+
 }

@@ -15,6 +15,8 @@ class Expenses extends \Core\Model
      * @var array
      */
     public $errors = [];
+    public $info = [];
+    public $status = [];
 
     public function __construct($data = [])
     {
@@ -72,6 +74,247 @@ class Expenses extends \Core\Model
         return false;
     }
 
+    public function addCategory()
+    {
+
+        $this->validateAddCategory();
+
+        if (empty($this->info['addName'])) {
+            $this->status['add'] = true;
+
+            $userID = $_SESSION['user_id'];
+            $inputCategoryOfExpense = $_POST['addExpenseCategory'];
+
+            if (!isset($_POST['addExpenseLimit']) || ($_POST['addExpenseLimit']) < 0 || ($_POST['addExpenseLimit'] == "")) {
+                $inputExpenseLimit = "0.00";
+            } else {
+                $inputExpenseLimit = $_POST['addExpenseLimit'];
+            }
+
+            $db = static::getDB();
+
+            $sql = "INSERT INTO expenses_category_assigned_to_users
+            VALUES (NULL, :userId, :expenseCategoryName, :expense_limit)";
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindValue(':expenseCategoryName', $inputCategoryOfExpense, PDO::PARAM_STR);
+            $stmt->bindValue(':expense_limit', $inputExpenseLimit, PDO::PARAM_STR);
+
+            return $stmt->execute();
+        }
+
+        return false;
+    }
+
+    public function addPaymentCategory()
+    {
+        $this->validateAddPaymentCategory();
+
+        if (empty($this->info['addPayment'])) {
+            $this->status['addPayment'] = true;
+
+            $userID = $_SESSION['user_id'];
+            $inputCategoryOfPayment = $_POST['addPaymentCategory'];
+
+            $db = static::getDB();
+
+            $sql = "INSERT INTO payment_methods_assigned_to_users
+            VALUES (NULL, :userId, :paymentCategoryName)";
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindValue(':paymentCategoryName', $inputCategoryOfPayment, PDO::PARAM_STR);
+
+            return $stmt->execute();
+        }
+
+        return false;
+    }
+
+    public function deleteCategory()
+    {
+
+        if (isset($_POST['deleteExpenseCategoryId'])) {
+            $this->status['delete'] = true;
+            $deleteFlag = true;
+            $userID = $_SESSION['user_id'];
+            $inputCategoryOfexpenseID = $_POST['deleteExpenseCategoryId'];
+
+            $db = static::getDB();
+
+            /**Delete records from expenses */
+            $sql = "DELETE FROM expenses
+            WHERE expense_category_assigned_to_user_id = :expenseCategoryId
+            AND user_id = :userId";
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindValue(':expenseCategoryId', $inputCategoryOfexpenseID, PDO::PARAM_INT);
+
+            $stmt->execute();
+
+            /**Delete expenses category */
+            if ($stmt == true) {
+                $sql = "DELETE FROM expenses_category_assigned_to_users
+            WHERE id = :expenseCategoryId
+            AND user_id = :userId";
+                $stmt = $db->prepare($sql);
+
+                $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+                $stmt->bindValue(':expenseCategoryId', $inputCategoryOfexpenseID, PDO::PARAM_INT);
+
+                $stmt->execute();
+                $this->info['deleteStatus'] = true;
+                return $this->info['deleteStatus'];
+            }
+        }
+
+        $this->info['deleteStatus'] = false;
+        return  $this->info['deleteStatus'];
+    }
+
+    public function deletePayment()
+    {
+
+        if (isset($_POST['deletePaymentCategoryId'])) {
+            $this->status['deletePayment'] = true;
+            $deleteFlag = true;
+            $userID = $_SESSION['user_id'];
+            $inputCategoryOfPaymentID = $_POST['deletePaymentCategoryId'];
+
+            $db = static::getDB();
+
+            /**Delete records from expenses */
+            $sql = "DELETE FROM expenses
+            WHERE payment_method_assigned_to_user_id = :paymentCategoryId
+            AND user_id = :userId";
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindValue(':paymentCategoryId', $inputCategoryOfPaymentID, PDO::PARAM_INT);
+
+            $stmt->execute();
+
+            /**Delete expenses category */
+            if ($stmt == true) {
+                $sql = "DELETE FROM payment_methods_assigned_to_users
+            WHERE id = :paymentCategoryId
+            AND user_id = :userId";
+                $stmt = $db->prepare($sql);
+
+                $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+                $stmt->bindValue(':paymentCategoryId', $inputCategoryOfPaymentID, PDO::PARAM_INT);
+
+                $stmt->execute();
+                $this->info['deleteStatus'] = true;
+                return $this->info['deleteStatus'];
+            }
+        }
+
+        $this->info['deleteStatus'] = false;
+        return  $this->info['deleteStatus'];
+    }
+
+    public static function deleteExpenseRecordsAssignedToUser()
+    {
+        $userID = $_SESSION['user_id'];
+
+        $db = static::getDB();
+
+        /**Delete all user records from incomes */
+        $sql = "DELETE FROM expenses
+            WHERE user_id = :userId";
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+    public function edit()
+    {
+        if (isset($this->info['name'])) unset($this->info['name']);
+
+        $this->validateEditCategory();
+
+        if ((empty($this->info['name'])) && !isset($_POST['addExpenseLimit'])) {
+            $this->status['edit'] = true;
+
+            $userID = $_SESSION['user_id'];
+            $inputCategoryOfExpenseID = $_POST['editExpenseCategoryId'];
+            $inputCategoryOfExpense = $_POST['editExpenseCategoryName'];
+
+            $db = static::getDB();
+
+            $sql = "UPDATE expenses_category_assigned_to_users
+            SET name = :expenseCategoryName
+            WHERE id = :expenseCategoryId
+            AND user_id = :userId";
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindValue(':expenseCategoryId', $inputCategoryOfExpenseID, PDO::PARAM_INT);
+            $stmt->bindValue(':expenseCategoryName', $inputCategoryOfExpense, PDO::PARAM_STR);
+
+            return $stmt->execute();
+        } else if ((empty($this->info['name'])) && (isset($_POST['addExpenseLimit']))) {
+            $this->status['edit'] = true;
+
+            $userID = $_SESSION['user_id'];
+            $inputCategoryOfExpenseID = $_POST['editExpenseCategoryId'];
+            $inputCategoryOfExpense = $_POST['editExpenseCategoryName'];
+            $limit = $_POST['addExpenseLimit'];
+
+            $db = static::getDB();
+
+            $sql = "UPDATE expenses_category_assigned_to_users
+            SET name = :expenseCategoryName,
+            expense_limit = :expenseLimit
+            WHERE id = :expenseCategoryId
+            AND user_id = :userId";
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindValue(':expenseCategoryId', $inputCategoryOfExpenseID, PDO::PARAM_INT);
+            $stmt->bindValue(':expenseCategoryName', $inputCategoryOfExpense, PDO::PARAM_STR);
+            $stmt->bindValue(':expenseLimit', $limit, PDO::PARAM_STR);
+
+            return $stmt->execute();
+        }
+
+        return false;
+    }
+
+    public function editPayment()
+    {
+        $this->validateEditPaymentCategory();
+
+        if (empty($this->info['editPaymentName'])) {
+            $this->status['editPayment'] = true;
+
+            $userID = $_SESSION['user_id'];
+            $inputCategoryOfPaymentID = $_POST['editPaymentCategoryId'];
+            $inputCategoryOfPayment = $_POST['editPaymentCategory'];
+
+            $db = static::getDB();
+
+            $sql = "UPDATE payment_methods_assigned_to_users
+            SET name = :paymentCategoryName
+            WHERE id = :paymentCategoryId
+            AND user_id = :userId";
+            $stmt = $db->prepare($sql);
+
+            $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+            $stmt->bindValue(':paymentCategoryId', $inputCategoryOfPaymentID, PDO::PARAM_INT);
+            $stmt->bindValue(':paymentCategoryName', $inputCategoryOfPayment, PDO::PARAM_STR);
+
+            return $stmt->execute();
+        }
+
+        return false;
+    }
+
     /**
      * Validate current property values, adding valiation error messages to the errors array property
      *
@@ -109,6 +352,240 @@ class Expenses extends \Core\Model
         // comment
         if ((strlen($this->comment)) > 50) {
             $this->errors['comment'] = 'Treść komentarza nie może przekroczyć 50 znaków!';
+        }
+    }
+
+    public function validateEditCategory()
+    {
+
+        if (isset($_POST['editExpenseCategoryName'])) {
+            $this->info['inputName'] = $_POST['editExpenseCategoryName'];
+            $inputCategoryOfExpense = $_POST['editExpenseCategoryName'];
+            $inputCategoryOfExpenseID = $_POST['editExpenseCategoryId'];
+            $inputExpensePosition = $_POST['editExpensePosition'];
+            $counter = 0;
+            $index = 0;
+            $occurance = 0;
+
+            $inputCategoryOfExpense = mb_strtolower($inputCategoryOfExpense, 'UTF-8');
+            $existingExpenseCategories = static::getExpenseCategoriesAssignedToUser();
+            $limit = static::getExpenseLimitAssignedToUser($inputCategoryOfExpenseID);
+            $limit = number_format($limit['category_limit']);
+            if (isset($_POST['addExpenseLimit'])) $inputLimit = $_POST['addExpenseLimit'];
+            $inputLimit = number_format($inputLimit);
+
+
+            foreach ($existingExpenseCategories as $expensesData) {
+                foreach ($expensesData as $name['name']) {
+
+                    $name['name'] = mb_strtolower($name['name'], 'UTF-8');
+
+                    if ($name['name'] == $inputCategoryOfExpense) {
+                        $this->info['name'] = "Kategoria o tej nazwie już istnieje!";
+                    }
+                }
+            }
+
+            $existingExpenseCategoriesPL = $existingExpenseCategories;
+            $existingExpenseCategories = static::changeFromPolishToEnglish($existingExpenseCategories);
+
+            foreach ($existingExpenseCategories as $expensesData) {
+                foreach ($expensesData as $name['name']) {
+
+                    $name['name'] = mb_strtolower($name['name'], 'UTF-8');
+
+                    if ($name['name'] == $inputCategoryOfExpense) {
+                        $this->info['name'] = "Kategoria o tej nazwie już istnieje!";
+                    }
+                }
+            }
+
+            if ((strlen($inputCategoryOfExpense) > 35) || (strlen($inputCategoryOfExpense) < 2)) {
+                $this->info['name'] = "Nazwa kategorii powinna zawierać więcej niż 1 znak i mniej niż 35 znaków";
+            }
+
+            if (isset($_POST['addExpenseLimit'])) {
+                if ($_POST['addExpenseLimit'] < 0) $this->info['addLimit'] = "Limit musi być większy od 0";
+            }
+
+            foreach ($existingExpenseCategoriesPL as $expensesData) {
+                $counter++;
+                foreach ($expensesData as $name['name']) {
+
+                    $name['name'] = mb_strtolower($name['name'], 'UTF-8');
+
+                    if (($name['name'] == $inputCategoryOfExpense)) $occurance++;
+                    if (($name['name'] == $inputCategoryOfExpense) && ($inputLimit !== $limit)) {
+                        $index = $counter;
+                    }
+                }
+            }
+
+            if (($index == $inputExpensePosition) && ($occurance == 1)) {
+                $this->info['name'] = [];
+            }
+
+            if (($occurance == 1) && ($index != $inputExpensePosition)) {
+                $this->info['name'] = "Kategoria o tej nazwie już istnieje!";
+                $this->info['id'] = $inputExpensePosition;
+            }
+        }
+    }
+
+    public function validateEditPaymentCategory()
+    {
+
+        if (isset($_POST['editPaymentCategory'])) {
+
+            $this->info['inputEditPaymentName'] = $_POST['editPaymentCategory'];
+            $inputCategoryOfPayment = $_POST['editPaymentCategory'];
+            //$inputCategoryOfPaymentID = $_POST['editPaymentCategoryId'];
+            $inputPaymentPosition = $_POST['editPaymentPosition'];
+            $counter = 0;
+            $index = 0;
+            $occurance = 0;
+
+
+
+
+            $this->info['inputEditPaymentName'] = $_POST['editPaymentCategory'];
+            $inputCategoryOfPayment = $_POST['editPaymentCategory'];
+
+            $inputCategoryOfPayment = mb_strtolower($inputCategoryOfPayment, 'UTF-8');
+            $existingPaymentCategories = static::getPaymentMethodsAssignedToUser();
+
+            foreach ($existingPaymentCategories as $paymentsData) {
+                foreach ($paymentsData as $name['payment_method']) {
+
+                    $name['payment_method'] = mb_strtolower($name['payment_method'], 'UTF-8');
+
+                    if ($name['payment_method'] == $inputCategoryOfPayment) {
+                        $this->info['editPaymentName'] = "Kategoria o tej nazwie już istnieje!";
+                        $this->info['paymentId'] = $inputPaymentPosition;
+                    }
+                }
+            }
+
+            $existingPaymentCategoriesPL = $existingPaymentCategories;
+            $existingPaymentCategories = static::changeFromPolishToEnglish($existingPaymentCategories);
+
+            foreach ($existingPaymentCategories as $paymentData) {
+                foreach ($paymentData as $name['payment_method']) {
+
+                    $name['payment_method'] = mb_strtolower($name['payment_method'], 'UTF-8');
+
+                    if ($name['payment_method'] == $inputCategoryOfPayment) {
+                        $this->info['editPaymentName'] = "Kategoria o tej nazwie już istnieje!";
+                        $this->info['paymentId'] = $inputPaymentPosition;
+                    }
+                }
+            }
+
+            if ((strlen($inputCategoryOfPayment) > 35) || (strlen($inputCategoryOfPayment) < 2)) {
+                $this->info['editPaymentName'] = "Nazwa kategorii powinna zawierać więcej niż 1 znak i mniej niż 35 znaków";
+                $this->info['paymentId'] = $inputPaymentPosition;
+            }
+
+            foreach ($existingPaymentCategoriesPL as $paymentData) {
+                $counter++;
+                foreach ($paymentData as $name['payment_method']) {
+
+                    $name['payment_method'] = mb_strtolower($name['payment_method'], 'UTF-8');
+
+                    if (($name['payment_method'] == $inputCategoryOfPayment)) $occurance++;
+                    if (($name['payment_method'] == $inputCategoryOfPayment)) {
+                        $index = $counter;
+                    }
+                }
+            }
+
+            if (($occurance == 1) && ($index != $inputPaymentPosition)) {
+                $this->info['editPaymentName'] = "Kategoria o tej nazwie już istnieje!";
+                $this->info['paymentId'] = $inputPaymentPosition;
+            }
+        }
+    }
+
+    public function validateAddCategory()
+    {
+
+        if (isset($_POST['addExpenseCategory'])) {
+            $this->info['inputName'] = $_POST['addExpenseCategory'];
+            $inputCategoryOfExpense = $_POST['addExpenseCategory'];
+
+            $inputCategoryOfExpense = mb_strtolower($inputCategoryOfExpense, 'UTF-8');
+            $existingExpenseCategories = static::getExpenseCategoriesAssignedToUser();
+
+            foreach ($existingExpenseCategories as $expensesData) {
+                foreach ($expensesData as $name['name']) {
+
+                    $name['name'] = mb_strtolower($name['name'], 'UTF-8');
+
+                    if ($name['name'] == $inputCategoryOfExpense) {
+                        $this->info['addName'] = "Kategoria o tej nazwie już istnieje!";
+                    }
+                }
+            }
+
+            $existingExpenseCategories = static::changeFromPolishToEnglish($existingExpenseCategories);
+
+            foreach ($existingExpenseCategories as $expensesData) {
+                foreach ($expensesData as $name['name']) {
+
+                    $name['name'] = mb_strtolower($name['name'], 'UTF-8');
+
+                    if ($name['name'] == $inputCategoryOfExpense) {
+                        $this->info['addName'] = "Kategoria o tej nazwie już istnieje!";
+                    }
+                }
+            }
+
+            if ((strlen($inputCategoryOfExpense) > 35) || (strlen($inputCategoryOfExpense) < 2)) {
+                $this->info['addName'] = "Nazwa kategorii powinna zawierać więcej niż 1 znak i mniej niż 35 znaków";
+            }
+
+            if (isset($_POST['addExpenseLimit'])) {
+                if ($_POST['addExpenseLimit'] < 0) $this->info['addLimit'] = "Limit musi być większy od 0";
+            }
+        }
+    }
+
+    public function validateAddPaymentCategory()
+    {
+        if (isset($_POST['addPaymentCategory'])) {
+            $this->info['inputName'] = $_POST['addPaymentCategory'];
+            $inputCategoryOfPayment = $_POST['addPaymentCategory'];
+
+            $inputCategoryOfPayment = mb_strtolower($inputCategoryOfPayment, 'UTF-8');
+            $existingPaymentCategories = static::getPaymentMethodsAssignedToUser();
+
+            foreach ($existingPaymentCategories as $paymentsData) {
+                foreach ($paymentsData as $name['payment_method']) {
+
+                    $name['payment_method'] = mb_strtolower($name['payment_method'], 'UTF-8');
+
+                    if ($name['payment_method'] == $inputCategoryOfPayment) {
+                        $this->info['addPayment'] = "Kategoria o tej nazwie już istnieje!";
+                    }
+                }
+            }
+
+            $existingPaymentCategories = static::changeFromPolishToEnglish($existingPaymentCategories);
+
+            foreach ($existingPaymentCategories as $paymentsData) {
+                foreach ($paymentsData as $name['payment_method']) {
+
+                    $name['payment_method'] = mb_strtolower($name['payment_method'], 'UTF-8');
+
+                    if ($name['payment_method'] == $inputCategoryOfPayment) {
+                        $this->info['addPayment'] = "Kategoria o tej nazwie już istnieje!";
+                    }
+                }
+            }
+
+            if ((strlen($inputCategoryOfPayment) > 35) || (strlen($inputCategoryOfPayment) < 2)) {
+                $this->info['addPayment'] = "Nazwa kategorii powinna zawierać więcej niż 1 znak i mniej niż 35 znaków";
+            }
         }
     }
 
@@ -322,6 +799,84 @@ class Expenses extends \Core\Model
         return $expensesDetailedData;
     }
 
+    public static function changeFromPolishToEnglish($expensesDetailedData)
+    {
+        if (!$expensesDetailedData) return false;
+
+
+        foreach ($expensesDetailedData as &$expensesDetailed) {
+            foreach ($expensesDetailed as &$name['name']) {
+
+                switch ($name['name']) {
+                    case "Książki":
+                        $name['name'] = "Books";
+                        break;
+                    case "Jedzenie":
+                        $name['name'] = "Food";
+                        break;
+                    case "Mieszkanie":
+                        $name['name'] = "Apartments";
+                        break;
+                    case "Telekomunikacja":
+                        $name['name'] = "Telecommunication";
+                        break;
+                    case "Opieka zdrowotna":
+                        $name['name'] = "Health";
+                        break;
+                    case "Ubranie":
+                        $name['name'] = "Clothes";
+                        break;
+                    case "Higiena":
+                        $name['name'] = "Hygiene";
+                        break;
+                    case "Dzieci":
+                        $name['name'] = "Kids";
+                        break;
+                    case "Rozrywka":
+                        $name['name'] = "Recreation";
+                        break;
+                    case "Wycieczka":
+                        $name['name'] = "Trip";
+                        break;
+                    case "Oszczędności":
+                        $name['name'] = "Savings";
+                        break;
+                    case "Na złotą jesień, czyli emeryturę":
+                        $name['name'] = "For Retirement";
+                        break;
+                    case "Spłata długów":
+                        $name['name'] = "Debt Repayment";
+                        break;
+                    case "Darowizna":
+                        $name['name'] = "Gift";
+                        break;
+                    case "Inne":
+                        $name['name'] = "Another";
+                        break;
+                }
+            }
+        }
+
+
+        foreach ($expensesDetailedData as &$expensesDetailed) {
+            foreach ($expensesDetailed as &$name['payment_method']) {
+
+                switch ($name['payment_method']) {
+                    case "Gotówka":
+                        $name['payment_method'] = "Cash";
+                        break;
+                    case "Karta Debetowa":
+                        $name['payment_method'] = "Debit Card";
+                        break;
+                    case "Karta Kredytowa":
+                        $name['payment_method'] = "Credit Card";
+                        break;
+                }
+            }
+        }
+        return $expensesDetailedData;
+    }
+
     public static function getExpense($user_ID, $choice = "", $dateStart = "", $dateEnd = "")
     {
         $expense = new Expenses;
@@ -381,7 +936,7 @@ class Expenses extends \Core\Model
 
             $user_ID = $user->id;
 
-            $sql = "SELECT name, id
+            $sql = "SELECT name, id, expense_limit as expenseLimit
         FROM expenses_category_assigned_to_users
         WHERE expenses_category_assigned_to_users.user_id = '$user_ID'";
 
@@ -403,7 +958,7 @@ class Expenses extends \Core\Model
 
             $user_ID = $user->id;
 
-            $sql = "SELECT id, name AS payment_method
+            $sql = "SELECT name AS payment_method, id
         FROM payment_methods_assigned_to_users
         WHERE payment_methods_assigned_to_users.user_id = '$user_ID'";
 

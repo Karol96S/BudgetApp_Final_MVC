@@ -100,3 +100,7 @@ const renderDOM = () => {
     }
 
 } 
+
+window.onload = (event) => {
+    checkCategory();
+  };

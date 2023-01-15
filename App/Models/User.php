@@ -22,6 +22,7 @@ class User extends \Core\Model
      */
     public $errors = [];
     public $info = [];
+    public $status = [];
 
     /**
      * Class constructor
@@ -466,6 +467,7 @@ class User extends \Core\Model
         }
 
         if(!isset($this->info['name'])) {
+            $this->status['name'] = true;
 
             $db = static::getDB();
 
@@ -519,6 +521,7 @@ class User extends \Core\Model
         }
 
         if(!isset($this->info['password'])) {
+            $this->status['password'] = true;
             $password_hash = password_hash($userInputPassword, PASSWORD_DEFAULT);
 
             $db = static::getDB();

@@ -16,6 +16,7 @@ class Expenses extends \Core\Model
      */
     public $errors = [];
     public $info = [];
+    public $status = [];
 
     public function __construct($data = [])
     {
@@ -79,6 +80,7 @@ class Expenses extends \Core\Model
         $this->validateAddCategory();
 
         if (empty($this->info['addName'])) {
+            $this->status['add'] = true;
 
             $userID = $_SESSION['user_id'];
             $inputCategoryOfExpense = $_POST['addExpenseCategory'];
@@ -110,6 +112,7 @@ class Expenses extends \Core\Model
         $this->validateAddPaymentCategory();
 
         if (empty($this->info['addPayment'])) {
+            $this->status['addPayment'] = true;
 
             $userID = $_SESSION['user_id'];
             $inputCategoryOfPayment = $_POST['addPaymentCategory'];
@@ -133,6 +136,7 @@ class Expenses extends \Core\Model
     {
 
         if (isset($_POST['deleteExpenseCategoryId'])) {
+            $this->status['delete'] = true;
             $deleteFlag = true;
             $userID = $_SESSION['user_id'];
             $inputCategoryOfexpenseID = $_POST['deleteExpenseCategoryId'];
@@ -174,6 +178,7 @@ class Expenses extends \Core\Model
     {
 
         if (isset($_POST['deletePaymentCategoryId'])) {
+            $this->status['deletePayment'] = true;
             $deleteFlag = true;
             $userID = $_SESSION['user_id'];
             $inputCategoryOfPaymentID = $_POST['deletePaymentCategoryId'];
@@ -213,7 +218,6 @@ class Expenses extends \Core\Model
 
     public static function deleteExpenseRecordsAssignedToUser()
     {
-
         $userID = $_SESSION['user_id'];
 
         $db = static::getDB();
@@ -235,6 +239,7 @@ class Expenses extends \Core\Model
         $this->validateEditCategory();
 
         if ((empty($this->info['name'])) && !isset($_POST['addExpenseLimit'])) {
+            $this->status['edit'] = true;
 
             $userID = $_SESSION['user_id'];
             $inputCategoryOfExpenseID = $_POST['editExpenseCategoryId'];
@@ -254,6 +259,7 @@ class Expenses extends \Core\Model
 
             return $stmt->execute();
         } else if ((empty($this->info['name'])) && (isset($_POST['addExpenseLimit']))) {
+            $this->status['edit'] = true;
 
             $userID = $_SESSION['user_id'];
             $inputCategoryOfExpenseID = $_POST['editExpenseCategoryId'];
@@ -285,6 +291,7 @@ class Expenses extends \Core\Model
         $this->validateEditPaymentCategory();
 
         if (empty($this->info['editPaymentName'])) {
+            $this->status['editPayment'] = true;
 
             $userID = $_SESSION['user_id'];
             $inputCategoryOfPaymentID = $_POST['editPaymentCategoryId'];

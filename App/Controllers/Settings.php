@@ -31,10 +31,13 @@ class Settings extends Authenticated
 
     public function deleteRecordsAction()
     {
-        Incomes::deleteIncomeRecordsAssignedToUser();
-        Expenses::deleteExpenseRecordsAssignedToUser();
+        if((Incomes::deleteIncomeRecordsAssignedToUser()) && (Expenses::deleteExpenseRecordsAssignedToUser())) {
+            $delete['status'] = true;
+        }
         
-        View::renderTemplate('Settings/show.html');
+        View::renderTemplate('Settings/show.html', [
+            'delete' => $delete['status']
+        ]);
     }
 
 }

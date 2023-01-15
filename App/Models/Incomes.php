@@ -16,6 +16,7 @@ class Incomes extends \Core\Model
      */
     public $errors = [];
     public $info = [];
+    public $status = [];
 
     public function __construct($data = [])
     {
@@ -68,6 +69,7 @@ class Incomes extends \Core\Model
         $this->validateAddCategory();
 
         if (empty($this->info['addName'])) {
+            $this->status['add'] = true;
 
             $userID = $_SESSION['user_id'];
             $inputCategoryOfIncome = $_POST['addIncomeCategory'];
@@ -91,6 +93,7 @@ class Incomes extends \Core\Model
     {
 
         if (isset($_POST['deleteCategoryId'])) {
+            $this->status['delete'] = true;
             $deleteFlag = true;
             $userID = $_SESSION['user_id'];
             $inputCategoryOfIncomeID = $_POST['deleteCategoryId'];
@@ -149,6 +152,7 @@ class Incomes extends \Core\Model
         $this->validateEditCategory();
 
         if (empty($this->info['name'])) {
+            $this->status['edit'] = true;
 
             $userID = $_SESSION['user_id'];
             $inputCategoryOfIncomeID = $_POST['editCategoryId'];

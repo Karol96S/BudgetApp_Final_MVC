@@ -6,6 +6,10 @@ html,body
     padding: 0px;
 }
 
+html {
+    overflow-y: scroll;
+}
+
 body {
     background-image: url(../images/homePageBackground.jpg);
     background-repeat: no-repeat;
@@ -205,6 +209,17 @@ li:hover {
     font-size: 0.85rem;
 }
 
+.modal-header b {
+    font-size: 1.4rem !important;
+    font-family: 'Roboto', serif;
+}
+
+.modal-body label {
+    font-size: 1.05rem !important;
+    font-family: 'Roboto', serif;
+    font-weight: bold;
+}
+
 #incomesSettingsIcon {
     padding: 0 !important;
     margin: 0 5px 0 0 !important;
@@ -219,6 +234,14 @@ li:hover {
     font-family: "Roboto", serif !important;
     font-weight: bold !important;
   }
+
+.success {
+    width: 25% !important;
+    filter: invert(33%) sepia(79%) saturate(4750%) hue-rotate(122deg) brightness(95%) contrast(92%);
+    background-color: transparent;
+    border-color: transparent;
+    border: none;
+}
 
 .category {
     background-color: #e2e4e6 !important;

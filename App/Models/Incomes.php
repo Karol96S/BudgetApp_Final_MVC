@@ -319,7 +319,7 @@ class Incomes extends \Core\Model
 
     public function currentMonthIncomes($user_ID)
     {
-        $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.date_of_income, incomes.income_comment
+        $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.id, incomes.date_of_income, incomes.income_comment
             FROM incomes, incomes_category_assigned_to_users
             WHERE incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
             AND incomes.user_id = incomes_category_assigned_to_users.user_id
@@ -340,7 +340,7 @@ class Incomes extends \Core\Model
     public function lastMonthIncomes($user_ID)
     {
 
-        $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.date_of_income, incomes.income_comment
+        $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.id, incomes.date_of_income, incomes.income_comment
             FROM incomes, incomes_category_assigned_to_users
             WHERE incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
             AND incomes.user_id = incomes_category_assigned_to_users.user_id
@@ -361,7 +361,7 @@ class Incomes extends \Core\Model
     public function customIncomes($user_ID, $userInputDateStart, $userInputDateEnd)
     {
 
-        $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.date_of_income, incomes.income_comment
+        $sql = "SELECT incomes_category_assigned_to_users.name, incomes.amount, incomes.id, incomes.date_of_income, incomes.income_comment
             FROM incomes, incomes_category_assigned_to_users
             WHERE incomes.income_category_assigned_to_user_id = incomes_category_assigned_to_users.id
             AND incomes.user_id = incomes_category_assigned_to_users.user_id

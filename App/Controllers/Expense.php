@@ -138,4 +138,14 @@ class Expense extends Authenticated
             'expense' => $expense
         ]);
     }
+
+    public function editSingleRecordCommentAction()
+    {
+        $expense = new Expenses($_POST);
+
+        $expense->editSingleRecordComment();
+
+        $this->redirect('/balance/show');
+
+    }
 }

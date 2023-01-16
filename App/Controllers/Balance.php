@@ -36,6 +36,8 @@ class Balance extends Authenticated
             $_SESSION['expenseByCategory'] = $this->expenseByCategory;
             $_SESSION['incomeByCategory'] = $this->incomeByCategory;
 
+            $this->singleExpenseComment = Expenses::getSingleCommentInfo();
+
         } else if ($_POST['date'] == 'lastMonth') {
 
             $this->income = Incomes::getIncome($this->user->id, 'lastMonth');
@@ -45,6 +47,8 @@ class Balance extends Authenticated
             $_SESSION['expenseByCategory'] = $this->expenseByCategory;
             $_SESSION['incomeByCategory'] = $this->incomeByCategory;
 
+            $this->singleExpenseComment = Expenses::getSingleCommentInfo();
+
         } else if ($_POST['date'] == 'custom') {
 
             $this->income = Incomes::getIncome($this->user->id, 'custom', $_POST['dateStart'], $_POST['dateEnd']);
@@ -53,13 +57,16 @@ class Balance extends Authenticated
             $this->expenseByCategory = Expenses::getExpenseByCategory($this->user->id, 'custom', $_POST['dateStart'], $_POST['dateEnd']);
             $_SESSION['expenseByCategory'] = $this->expenseByCategory;
             $_SESSION['incomeByCategory'] = $this->incomeByCategory;
+
+            $this->singleExpenseComment = Expenses::getSingleCommentInfo();
         }
 
         View::renderTemplate('/Balance/show.html', [
             'income' => $this->income,
             'incomeByCategory' => $this->incomeByCategory,
             'expense' => $this->expense,
-            'expenseByCategory' => $this->expenseByCategory
+            'expenseByCategory' => $this->expenseByCategory,
+            'singleExpenseComment' => $this->singleExpenseComment
         ]);
     }
 

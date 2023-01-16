@@ -11,7 +11,7 @@
 <section id="workingSpace" class="container-fluid p-0">
     <div class="row justify-content-center text-center mt-5">
         <div class="col col-xl-8 col-lg-10 col-md-10 col-11 my-4">
-            <form method="post" action="/balance/show">
+            <form method="post" action="/balance/show" id="dateSpanBalance">
                 <div id="chooseDate" class="col col-12 py-3">
                     <h2 class="display-6">
                         Bilans za okres:
@@ -246,7 +246,72 @@
                     {% for data in expense %}
                     {% set rows = rows + 1 %}
                     <tr>
-                        <td>{{ loop.index }}</td>
+                        <td><div class="row text-center align-items-center">
+                            <div class="col col-md-1"></div>
+                            <div class="dropdownContainer col col-12 col-md-4">
+                                <div class="btn-group dropup">
+                                    <button type="button" class="btn btn-secondary btn-sm dropdown-toggle"
+                                        onclick="keepPosition()"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    </button>
+                                    <ul class="dropdown-menu itemsList">
+                                        <li><a class="dropdown-item" onclick="document.getElementById('editSingleExpenseCommentModal{{ data.id }}').click();" href="#">Edytuj komentarz</a></li>
+                                        <form id="deleteSingleRecord" action="/expense/deleteSingleRecord" method="post">
+                                        <li><a class="dropdown-item" href="#">Usuń pozycję</a></li>
+                                    </ul>
+                                    </form>
+                                </div>
+                                <button type="button"  class="btn btn-primary"
+                                                id="editSingleExpenseCommentModal{{ data.id }}" data-bs-toggle="modal"
+                                                data-bs-target="#modalEditSingleExpenseComment{{ data.id }}"
+                                                style="display: none;">
+                                            </button>
+                                            <div class="modal fade" id="modalEditSingleExpenseComment{{ data.id }}" tabindex="-1"
+                                                aria-labelledby="modalEditSingleExpenseCommentLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <form id="editSingleExpenseComment" action="/expense/editSingleRecordComment" method="post">
+                                                            <div class="modal-header alert alert-primary">
+                                                                <h5 class="modal-title fs-5"
+                                                                    id="modalEditSingleExpenseCommentLabel{{ data.id }}"><b>Edytuj treść komentarza dla <cite>{{ data.name }}</cite> :</b>
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <div>
+                                                                    <label for="editSingleExpenseCommentInput"
+                                                                        class="col-form-label">Komentarz:
+                                                                    </label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="editSingleExpenseCommentInput"
+                                                                        name="editSingleExpenseCommentInput" value="{{ data.expense_comment }}">
+                                                                    <input type="hidden" name="singleExpenseId" id="singleExpenseId" value="{{ data.id }}">
+                                                                    {% if singleExpenseComment is not empty %}
+                                                                    <input type="hidden" id="singleExpenseCommentError">
+                                                                    <div>
+                                                                        <p class="text-danger">
+                                                                            {{ singleExpenseComment }}
+                                                                        </p>
+                                                                    </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">Zmień</button>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Wróć</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                            </div>
+                            <div class="col col-12 col-md-4 text-center text-md-start">{{ loop.index }}</div>
+                            <div class="col col-md-3"></div>
+                        </div>
+                        </td>
                         <td>{{ data.date_of_expense }}</td>
                         <td>{{ data.name }}</td>
                         <td>{{ data.payment_method }}</td>
@@ -287,6 +352,7 @@
 
 <script>
     window.onload = function() {
+        try {
 
         if ({{ pieChartIncomes | json_encode | raw}}) {
 
@@ -325,8 +391,12 @@
             }]
         });
         chart.render();
+    } catch(e) {
+        console.log(e);
+    }
 
     }
 </script>
+<script src="/js/app.js"></script>
 
 {% endblock %}

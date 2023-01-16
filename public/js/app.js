@@ -12,13 +12,35 @@ function setPosition() {
     });
 }
 
-window.onload = function () {
-    $("body").children().first().before($(".modal"));
+function rememberDate() {
+    let select = document.getElementById('date');
+    let date = select.value;
+    sessionStorage.date = date;
+}
+
+function getOldDate() {
+    let select = document.getElementById('date');
+    let date = select.value;
+    sessionStorage.date = date;
+}
+
+function setSelectMenuDate() {
+    if(sessionStorage.date) {
+        document.getElementById('date').value = sessionStorage.date;
+    }
+}
+
+document.getElementById('date').addEventListener("click", function() {
+    rememberDate();
+});
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    //$("body").children().first().before($(".modal"));
     setPosition();
     showErrorModals();
     showSuccessModals();
     //adjustAccordion();
-};
+  });
 
 function showErrorModals() {
     //check edit-income
@@ -79,6 +101,19 @@ function showErrorModals() {
     if (document.getElementById('errorEditPassword')) {
         document.getElementById('panelsStayOpen-collapseFour').className = "accordion-collapse collapse show";
         document.getElementById('editPassword').click();
+    }
+
+    //check expense-comment
+    console.log('wtf1');
+    if (document.getElementById('singleExpenseCommentError')) {
+        console.log('wtf2');
+        let expenseCommentId;
+        let index;
+        index = document.getElementById('singleExpenseId').value;
+        console.log('tu');
+        expenseCommentId = "editSingleExpenseCommentModal" + index;
+        document.getElementById(expenseCommentId).click();
+        console.log('eh', expenseCommentId)
     }
 }
 

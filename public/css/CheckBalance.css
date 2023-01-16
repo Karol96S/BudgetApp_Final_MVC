@@ -360,6 +360,22 @@ tfoot td:nth-of-type(1) {
     color: rgb(83, 12, 10);
 }
 
+.itemsList a.dropdown-item {
+    color: black !important;
+    font-size: 0.85rem !important;
+}
+
+.modal-header b {
+    font-size: 1.4rem !important;
+    font-family: 'Roboto', serif;
+}
+
+.modal-body label {
+    font-size: 1.05rem !important;
+    font-family: 'Roboto', serif;
+    font-weight: bold;
+}
+
 #balanceSummary {
     background-color: #dee5ec;
     border: solid 5px rgb(73, 106, 156);

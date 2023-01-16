@@ -315,6 +315,49 @@ class Expenses extends \Core\Model
         return false;
     }
 
+    public static function getSingleCommentInfo()
+    {
+        if(isset($_SESSION['singleExpenseComment'])) {
+            $message = $_SESSION['singleExpenseComment'];
+            unset($_SESSION['singleExpenseComment']);
+            return $message;
+        }
+
+        else return null;
+    }
+
+    public function editSingleRecordComment()
+    {
+        unset($_SESSION['singleExpenseComment']);
+
+        if (isset($_POST['editSingleExpenseCommentInput'])) {
+            if ((strlen($_POST['editSingleExpenseCommentInput'])) > 50) {
+                $_SESSION['singleExpenseComment'] = "Treść komentarza nie może przekroczyć 50 znaków!";
+            }
+        }
+
+        if(!isset($_SESSION['singleExpenseComment']) && isset($_POST['singleExpenseId'])) {
+
+        $userID = $_SESSION['user_id'];
+        $singleExpenseID = $_POST['singleExpenseId'];
+        $singleExpenseComment = $_POST['editSingleExpenseCommentInput'];
+
+        $db = static::getDB();
+
+        $sql = "UPDATE expenses
+            SET expense_comment = :expenseComment
+            WHERE id = :expenseId
+            AND user_id = :userId";
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+        $stmt->bindValue(':expenseId', $singleExpenseID, PDO::PARAM_INT);
+        $stmt->bindValue(':expenseComment', $singleExpenseComment, PDO::PARAM_STR);
+
+        return $stmt->execute();
+        }
+    }
+
     /**
      * Validate current property values, adding valiation error messages to the errors array property
      *
@@ -592,7 +635,7 @@ class Expenses extends \Core\Model
     public function currentMonthExpenses($user_ID)
     {
 
-        $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.amount, expenses.date_of_expense, expenses.expense_comment
+        $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.id, expenses.amount, expenses.date_of_expense, expenses.expense_comment
         FROM expenses, expenses_category_assigned_to_users, payment_methods_assigned_to_users
         WHERE expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
         AND expenses.payment_method_assigned_to_user_id = payment_methods_assigned_to_users.id
@@ -615,7 +658,7 @@ class Expenses extends \Core\Model
     public function lastMonthExpenses($user_ID)
     {
 
-        $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.amount, expenses.date_of_expense, expenses.expense_comment
+        $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.id, expenses.amount, expenses.date_of_expense, expenses.expense_comment
             FROM expenses, expenses_category_assigned_to_users, payment_methods_assigned_to_users
             WHERE expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
             AND expenses.payment_method_assigned_to_user_id = payment_methods_assigned_to_users.id
@@ -638,7 +681,7 @@ class Expenses extends \Core\Model
     public function customExpenses($user_ID, $userInputDateStart, $userInputDateEnd)
     {
 
-        $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.amount, expenses.date_of_expense, expenses.expense_comment
+        $sql = "SELECT expenses_category_assigned_to_users.name, payment_methods_assigned_to_users.name AS payment_method, expenses.id, expenses.amount, expenses.date_of_expense, expenses.expense_comment
             FROM expenses, expenses_category_assigned_to_users, payment_methods_assigned_to_users
             WHERE expenses.expense_category_assigned_to_user_id = expenses_category_assigned_to_users.id
             AND expenses.payment_method_assigned_to_user_id = payment_methods_assigned_to_users.id

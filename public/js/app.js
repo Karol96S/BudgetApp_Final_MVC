@@ -1,24 +1,54 @@
 //wroc do pozycji
 function keepPosition() {
     sessionStorage.scrollTop = $(window).scrollTop();
-    scrollPos = $(window).scrollTop();
 }
 
 function setPosition() {
     $(document).ready(function () {
-        if (sessionStorage.scrollTop != "undefined") {
+        if ((sessionStorage.scrollTop != "undefined") && (sessionStorage.scrollTop != 0)) {
             $(window).scrollTop(sessionStorage.scrollTop);
+            sessionStorage.scrollTop = 0;
         }
     });
 }
 
-window.onload = function () {
-    $("body").children().first().before($(".modal"));
+function getPos(el) {
+    // yay readability
+    for (var lx=0, ly=0;
+         el != null;
+         lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
+    return {x: lx,y: ly};
+}
+
+function rememberDate() {
+    let select = document.getElementById('date');
+    let date = select.value;
+    sessionStorage.date = date;
+}
+
+function getOldDate() {
+    let select = document.getElementById('date');
+    let date = select.value;
+    sessionStorage.oldDate = date;
+}
+
+function setSelectMenuDate() {
+    if(sessionStorage.date) {
+        document.getElementById('date').value = sessionStorage.date;
+    }
+}
+
+document.getElementById('date').addEventListener("click", function() {
+    rememberDate();
+});
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    //$("body").children().first().before($(".modal"));
     setPosition();
     showErrorModals();
     showSuccessModals();
     //adjustAccordion();
-};
+  });
 
 function showErrorModals() {
     //check edit-income
@@ -79,6 +109,24 @@ function showErrorModals() {
     if (document.getElementById('errorEditPassword')) {
         document.getElementById('panelsStayOpen-collapseFour').className = "accordion-collapse collapse show";
         document.getElementById('editPassword').click();
+    }
+
+    //check expense-comment
+    if (document.getElementById('singleExpenseCommentError')) {
+        let expenseCommentId;
+        let index;
+        index = document.getElementById('commentErrorId').value;
+        expenseCommentId = "editSingleExpenseCommentModal" + index;
+        document.getElementById(expenseCommentId).click();
+    }
+
+    //check income-comment
+    if (document.getElementById('singleIncomeCommentError')) {
+        let incomeCommentId;
+        let index;
+        index = document.getElementById('commentErrorId').value;
+        incomeCommentId = "editSingleIncomeCommentModal" + index;
+        document.getElementById(incomeCommentId).click();
     }
 }
 

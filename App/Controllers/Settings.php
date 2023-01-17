@@ -27,6 +27,7 @@ class Settings extends Authenticated
         View::renderTemplate('Settings/show.html', [
             'user' => $this->user
         ]);
+        
     }
 
     public function deleteRecordsAction()

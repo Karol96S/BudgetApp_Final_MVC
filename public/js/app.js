@@ -38,17 +38,28 @@ function setSelectMenuDate() {
     }
 }
 
+if(document.getElementById('date')) {
 document.getElementById('date').addEventListener("click", function() {
     rememberDate();
 });
+}
 
-document.addEventListener("DOMContentLoaded", function(event) {
-    //$("body").children().first().before($(".modal"));
+//Handle modals and scroll pos depending on page
+if(document.getElementById('accordionIncomes')) {
+    window.onload = function() {
+    $("body").children().first().before($(".modal"));
     setPosition();
     showErrorModals();
     showSuccessModals();
     //adjustAccordion();
-  });
+    }
+} else {
+document.addEventListener("DOMContentLoaded", function(event) {
+    setPosition();
+    showErrorModals();
+    showSuccessModals();
+    adjustAccordion();
+  });}
 
 function showErrorModals() {
     //check edit-income
@@ -147,7 +158,6 @@ function showSuccessModals() {
     }
 }
 
-/*
 function rememberState() {
         if ((localStorage.getItem("panelsStayOpen-collapseOne") === null) || (localStorage.getItem("panelsStayOpen-collapseOne") == "false")) {
             localStorage.setItem('panelsStayOpen-collapseOne', "true");
@@ -167,4 +177,4 @@ function adjustAccordion() {
     else if (localStorage['panelsStayOpen-collapseOne'] == "false") {
     document.getElementById('panelsStayOpen-collapseOne').className = "accordion-collapse collapse";
     }
-}*/
+}

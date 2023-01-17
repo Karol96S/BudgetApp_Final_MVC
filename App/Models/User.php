@@ -140,7 +140,7 @@ class User extends \Core\Model
 
         foreach ($namesOfExpensesCategories as $category) {
             $name = $category['name'];
-            $insertExpenseCategories = $db->prepare("INSERT INTO expenses_category_assigned_to_users VALUES(NULL, '$userId', '$name')");
+            $insertExpenseCategories = $db->prepare("INSERT INTO expenses_category_assigned_to_users VALUES(NULL, '$userId', '$name', '0')");
             $insertExpenseCategories->execute();
         }
 

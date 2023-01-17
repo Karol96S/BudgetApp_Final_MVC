@@ -92,4 +92,24 @@ class Income extends Authenticated
         ]);
     }
 
+    public function editSingleRecordCommentAction()
+    {
+        $income = new Incomes($_POST);
+
+        $income->editSingleRecordComment();
+
+        $this->redirect('/balance/show');
+
+    }
+
+    public function deleteSingleRecordAction()
+    {
+        $income = new Incomes($_POST);
+
+        $income->deleteSingleRecord();
+
+        $this->redirect('/balance/show');
+
+    }
+
 }

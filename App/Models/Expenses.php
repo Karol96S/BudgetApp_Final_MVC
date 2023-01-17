@@ -318,8 +318,10 @@ class Expenses extends \Core\Model
     public static function getSingleCommentInfo()
     {
         if(isset($_SESSION['singleExpenseComment'])) {
-            $message = $_SESSION['singleExpenseComment'];
+            $message['comment'] = $_SESSION['singleExpenseComment'];
+            $message['id'] = $_SESSION['singleExpenseId'];
             unset($_SESSION['singleExpenseComment']);
+            unset($_SESSION['singleExpenseId']);
             return $message;
         }
 
@@ -330,9 +332,13 @@ class Expenses extends \Core\Model
     {
         unset($_SESSION['singleExpenseComment']);
 
-        if (isset($_POST['editSingleExpenseCommentInput'])) {
+        $_SESSION['editExpenseStatus'] = true;
+
+        if (isset($_POST['editSingleExpenseCommentInput']) && isset($_POST['singleExpenseId'])) {
             if ((strlen($_POST['editSingleExpenseCommentInput'])) > 50) {
                 $_SESSION['singleExpenseComment'] = "Treść komentarza nie może przekroczyć 50 znaków!";
+                $_SESSION['singleExpenseId'] = $_POST['singleExpenseId'];
+                $_SESSION['editExpenseStatus'] = false;
             }
         }
 
@@ -353,6 +359,30 @@ class Expenses extends \Core\Model
         $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
         $stmt->bindValue(':expenseId', $singleExpenseID, PDO::PARAM_INT);
         $stmt->bindValue(':expenseComment', $singleExpenseComment, PDO::PARAM_STR);
+
+        return $stmt->execute();
+        }
+    }
+
+    public function deleteSingleRecord()
+    {
+
+        $_SESSION['deleteExpenseStatus'] = true;
+
+        if(isset($_POST['singleExpenseRecordId'])) {
+
+        $userID = $_SESSION['user_id'];
+        $singleExpenseRecordID = $_POST['singleExpenseRecordId'];
+
+        $db = static::getDB();
+
+        $sql = "DELETE FROM expenses
+            WHERE id = :expenseId
+            AND user_id = :userId";
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+        $stmt->bindValue(':expenseId', $singleExpenseRecordID, PDO::PARAM_INT);
 
         return $stmt->execute();
         }

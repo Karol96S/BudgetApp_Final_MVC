@@ -176,6 +176,79 @@ class Incomes extends \Core\Model
         return false;
     }
 
+    public static function getSingleCommentInfo()
+    {
+        if(isset($_SESSION['singleIncomeComment'])) {
+            $message['comment'] = $_SESSION['singleIncomeComment'];
+            $message['id'] = $_SESSION['singleIncomeId'];
+            unset($_SESSION['singleIncomeComment']);
+            unset($_SESSION['singleIncomeId']);
+            return $message;
+        }
+
+        else return null;
+    }
+
+    public function editSingleRecordComment()
+    {
+        unset($_SESSION['singleIncomeComment']);
+
+        $_SESSION['editIncomeStatus'] = true;
+
+        if (isset($_POST['editSingleIncomeCommentInput']) && isset($_POST['singleIncomeId'])) {
+            if ((strlen($_POST['editSingleIncomeCommentInput'])) > 50) {
+                $_SESSION['singleIncomeComment'] = "Treść komentarza nie może przekroczyć 50 znaków!";
+                $_SESSION['singleIncomeId'] = $_POST['singleIncomeId'];
+                $_SESSION['editIncomeStatus'] = false;
+            }
+        }
+
+        if(!isset($_SESSION['singleIncomeComment']) && isset($_POST['singleIncomeId'])) {
+
+        $userID = $_SESSION['user_id'];
+        $singleIncomeID = $_POST['singleIncomeId'];
+        $singleIncomeComment = $_POST['editSingleIncomeCommentInput'];
+
+        $db = static::getDB();
+
+        $sql = "UPDATE incomes
+            SET income_comment = :incomeComment
+            WHERE id = :incomeId
+            AND user_id = :userId";
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+        $stmt->bindValue(':incomeId', $singleIncomeID, PDO::PARAM_INT);
+        $stmt->bindValue(':incomeComment', $singleIncomeComment, PDO::PARAM_STR);
+
+        return $stmt->execute();
+        }
+    }
+
+    public function deleteSingleRecord()
+    {
+
+        $_SESSION['deleteIncomeStatus'] = true;
+
+        if(isset($_POST['singleIncomeRecordId'])) {
+
+        $userID = $_SESSION['user_id'];
+        $singleIncomeRecordID = $_POST['singleIncomeRecordId'];
+
+        $db = static::getDB();
+
+        $sql = "DELETE FROM incomes
+            WHERE id = :incomeId
+            AND user_id = :userId";
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(':userId', $userID, PDO::PARAM_INT);
+        $stmt->bindValue(':incomeId', $singleIncomeRecordID, PDO::PARAM_INT);
+
+        return $stmt->execute();
+        }
+    }
+
     /**
      * Validate current property values, adding valiation error messages to the errors array property
      *

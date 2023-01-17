@@ -148,4 +148,14 @@ class Expense extends Authenticated
         $this->redirect('/balance/show');
 
     }
+
+    public function deleteSingleRecordAction()
+    {
+        $expense = new Expenses($_POST);
+
+        $expense->deleteSingleRecord();
+
+        $this->redirect('/balance/show');
+
+    }
 }

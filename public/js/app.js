@@ -1,15 +1,23 @@
 //wroc do pozycji
 function keepPosition() {
     sessionStorage.scrollTop = $(window).scrollTop();
-    scrollPos = $(window).scrollTop();
 }
 
 function setPosition() {
     $(document).ready(function () {
-        if (sessionStorage.scrollTop != "undefined") {
+        if ((sessionStorage.scrollTop != "undefined") && (sessionStorage.scrollTop != 0)) {
             $(window).scrollTop(sessionStorage.scrollTop);
+            sessionStorage.scrollTop = 0;
         }
     });
+}
+
+function getPos(el) {
+    // yay readability
+    for (var lx=0, ly=0;
+         el != null;
+         lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
+    return {x: lx,y: ly};
 }
 
 function rememberDate() {
@@ -21,7 +29,7 @@ function rememberDate() {
 function getOldDate() {
     let select = document.getElementById('date');
     let date = select.value;
-    sessionStorage.date = date;
+    sessionStorage.oldDate = date;
 }
 
 function setSelectMenuDate() {
@@ -104,16 +112,21 @@ function showErrorModals() {
     }
 
     //check expense-comment
-    console.log('wtf1');
     if (document.getElementById('singleExpenseCommentError')) {
-        console.log('wtf2');
         let expenseCommentId;
         let index;
-        index = document.getElementById('singleExpenseId').value;
-        console.log('tu');
+        index = document.getElementById('commentErrorId').value;
         expenseCommentId = "editSingleExpenseCommentModal" + index;
         document.getElementById(expenseCommentId).click();
-        console.log('eh', expenseCommentId)
+    }
+
+    //check income-comment
+    if (document.getElementById('singleIncomeCommentError')) {
+        let incomeCommentId;
+        let index;
+        index = document.getElementById('commentErrorId').value;
+        incomeCommentId = "editSingleIncomeCommentModal" + index;
+        document.getElementById(incomeCommentId).click();
     }
 }
 

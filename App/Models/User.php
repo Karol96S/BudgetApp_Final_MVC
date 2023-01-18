@@ -140,7 +140,7 @@ class User extends \Core\Model
 
         foreach ($namesOfExpensesCategories as $category) {
             $name = $category['name'];
-            $insertExpenseCategories = $db->prepare("INSERT INTO expenses_category_assigned_to_users VALUES(NULL, '$userId', '$name')");
+            $insertExpenseCategories = $db->prepare("INSERT INTO expenses_category_assigned_to_users VALUES(NULL, '$userId', '$name', '0')");
             $insertExpenseCategories->execute();
         }
 
@@ -299,7 +299,7 @@ class User extends \Core\Model
      */
     protected function sendPasswordResetEmail()
     {
-        $url = 'http://' . $_SERVER['HTTP_HOST'] . '/password/reset/' . $this->password_reset_token;
+        $url = 'https://' . $_SERVER['HTTP_HOST'] . '/password/reset/' . $this->password_reset_token;
 
         $text = View::getTemplate('Password/reset_email.txt', ['url' => $url]);
         $html = View::getTemplate('Password/reset_email.html', ['url' => $url]);
@@ -375,7 +375,7 @@ class User extends \Core\Model
      */
     public function sendActivationEmail()
     {
-        $url = 'http://' . $_SERVER['HTTP_HOST'] . '/register/activate/' . $this->activation_token;
+        $url = 'https://' . $_SERVER['HTTP_HOST'] . '/register/activate/' . $this->activation_token;
 
         $text = View::getTemplate('Register/activation_email.txt', ['url' => $url]);
         $html = View::getTemplate('Register/activation_email.html', ['url' => $url]);

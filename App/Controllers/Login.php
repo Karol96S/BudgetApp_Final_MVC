@@ -14,9 +14,11 @@ class Login extends \Core\Controller
         if (Auth::getUser()) {
 
             $this->redirect(Auth::getReturnToPage());
-        }
+        } else {
 
         View::renderTemplate('Login/new.html');
+        
+        }
     }
 
     public function createAction()
